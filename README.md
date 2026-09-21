@@ -26,6 +26,7 @@ The planned system will translate a testing objective into browser actions, exec
 
 - [Project specification](docs/specification.md)
 - [Evaluation plan](docs/evaluation-plan.md)
+- [Browser tool contract v0.1](contracts/v0.1/README.md)
 - [Contribution and Git workflow](CONTRIBUTING.md)
 
 ## Planned milestones

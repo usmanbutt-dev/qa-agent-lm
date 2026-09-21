@@ -12,6 +12,7 @@ dist/
 .next/
 
 # Editors and operating systems
+.codegraph/
 .idea/
 .vscode/
 .DS_Store

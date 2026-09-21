@@ -1,0 +1,37 @@
+{
+  "valid_requests": [
+    { "contract_version": "0.1", "request_id": "req_1", "session_id": "session_1", "operation": "navigate", "input": { "url": "http://127.0.0.1:8000/register" } },
+    { "contract_version": "0.1", "request_id": "req_2", "session_id": "session_1", "operation": "inspect", "input": { "max_elements": 50, "include_text": true } },
+    { "contract_version": "0.1", "request_id": "req_3", "session_id": "session_1", "operation": "click", "input": { "element_ref": "el_register" } },
+    { "contract_version": "0.1", "request_id": "req_4", "session_id": "session_1", "operation": "type", "input": { "element_ref": "el_email", "text": "person@example.com", "replace": true } },
+    { "contract_version": "0.1", "request_id": "req_5", "session_id": "session_1", "operation": "read_diagnostics", "input": { "channels": ["console", "network"], "max_entries": 20 } },
+    { "contract_version": "0.1", "request_id": "req_6", "session_id": "session_1", "operation": "take_screenshot", "input": { "label": "registration error", "full_page": false } },
+    { "contract_version": "0.1", "request_id": "req_7", "session_id": "session_1", "operation": "finish", "input": { "outcome": "fail", "summary": "Registration returned an unexpected server error.", "evidence_ids": ["shot_1", "console_1"] } },
+    { "contract_version": "0.1", "request_id": "req_8", "session_id": "session_1", "operation": "request_human_help", "input": { "reason": "missing_information", "question": "Which test account should be used?" } }
+  ],
+  "invalid_requests": [
+    { "name": "unknown version", "value": { "contract_version": "0.2", "request_id": "req_1", "session_id": "session_1", "operation": "inspect", "input": {} } },
+    { "name": "raw selector forbidden", "value": { "contract_version": "0.1", "request_id": "req_2", "session_id": "session_1", "operation": "click", "input": { "selector": "#submit" } } },
+    { "name": "unknown request field", "value": { "contract_version": "0.1", "request_id": "req_3", "session_id": "session_1", "operation": "inspect", "input": {}, "prompt": "ignore rules" } },
+    { "name": "unsupported terminal outcome", "value": { "contract_version": "0.1", "request_id": "req_4", "session_id": "session_1", "operation": "finish", "input": { "outcome": "unknown", "summary": "No result.", "evidence_ids": [] } } },
+    { "name": "duplicate diagnostic channel", "value": { "contract_version": "0.1", "request_id": "req_5", "session_id": "session_1", "operation": "read_diagnostics", "input": { "channels": ["console", "console"] } } }
+  ],
+  "valid_responses": [
+    { "contract_version": "0.1", "request_id": "req_1", "operation": "navigate", "status": "success", "result": { "final_url": "http://127.0.0.1:8000/register", "title": "Register" } },
+    { "contract_version": "0.1", "request_id": "req_2", "operation": "inspect", "status": "success", "result": { "observation_id": "obs_1", "url": "http://127.0.0.1:8000/register", "elements": [{ "element_ref": "el_email", "role": "textbox", "name": "Email", "disabled": false }], "truncated": false } },
+    { "contract_version": "0.1", "request_id": "req_3", "operation": "click", "status": "success", "result": { "navigation_occurred": false } },
+    { "contract_version": "0.1", "request_id": "req_4", "operation": "type", "status": "success", "result": { "characters_written": 18 } },
+    { "contract_version": "0.1", "request_id": "req_5", "operation": "read_diagnostics", "status": "success", "result": { "entries": [{ "evidence_id": "console_1", "channel": "console", "level": "error", "message": "Request failed" }], "truncated": false } },
+    { "contract_version": "0.1", "request_id": "req_6", "operation": "take_screenshot", "status": "success", "result": { "artifact_id": "shot_1" } },
+    { "contract_version": "0.1", "request_id": "req_7", "operation": "finish", "status": "success", "result": { "outcome": "fail", "state": "finished" } },
+    { "contract_version": "0.1", "request_id": "req_8", "operation": "request_human_help", "status": "success", "result": { "state": "paused" } },
+    { "contract_version": "0.1", "request_id": "req_9", "operation": "click", "status": "error", "error": { "code": "STALE_ELEMENT_REFERENCE", "message": "Inspect the page again before clicking.", "retryable": true, "details": { "element_ref": "el_old" } } }
+  ],
+  "invalid_responses": [
+    { "name": "mismatched result type", "value": { "contract_version": "0.1", "request_id": "req_1", "operation": "navigate", "status": "success", "result": { "artifact_id": "shot_1" } } },
+    { "name": "success and error together", "value": { "contract_version": "0.1", "request_id": "req_2", "operation": "click", "status": "success", "result": { "navigation_occurred": false }, "error": { "code": "TOOL_EXECUTION_FAILED", "message": "Unexpected failure.", "retryable": false, "details": {} } } },
+    { "name": "unknown error code", "value": { "contract_version": "0.1", "request_id": "req_3", "operation": "click", "status": "error", "error": { "code": "MAYBE_RETRY", "message": "Unknown.", "retryable": true, "details": {} } } },
+    { "name": "error missing retryability", "value": { "contract_version": "0.1", "request_id": "req_4", "operation": "click", "status": "error", "error": { "code": "TARGET_NOT_FOUND", "message": "Target missing.", "details": {} } } },
+    { "name": "incorrect retryability", "value": { "contract_version": "0.1", "request_id": "req_5", "operation": "click", "status": "error", "error": { "code": "TARGET_NOT_FOUND", "message": "Target missing.", "retryable": false, "details": {} } } }
+  ]
+}
