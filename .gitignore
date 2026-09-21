@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.venv/
+
+# JavaScript
+node_modules/
+dist/
+.next/
+
+# Editors and operating systems
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Generated data, models, traces, and reports
+data/raw/
+data/processed/
+models/
+checkpoints/
+artifacts/
+traces/
+reports/generated/
+
+# Local databases and logs
+*.db
+*.sqlite*
+*.log
