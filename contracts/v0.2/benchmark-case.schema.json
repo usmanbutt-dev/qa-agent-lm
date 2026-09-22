@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://qa-agent-lm.dev/contracts/v0.2/benchmark-case.schema.json",
+  "title": "Browser benchmark case v0.2",
+  "type": "object",
+  "properties": {
+    "contract_version": { "const": "0.2" },
+    "case_id": { "$ref": "#/$defs/id" },
+    "title": { "type": "string", "minLength": 1, "maxLength": 160 },
+    "objective": { "type": "string", "minLength": 1, "maxLength": 2000 },
+    "split": { "enum": ["train", "development", "test"] },
+    "tags": { "type": "array", "items": { "$ref": "#/$defs/id" }, "maxItems": 20, "uniqueItems": true },
+    "setup": {
+      "type": "object",
+      "properties": {
+        "start_path": { "type": "string", "pattern": "^/", "maxLength": 500 },
+        "seed": { "type": "object", "maxProperties": 50, "additionalProperties": { "type": ["string", "number", "integer", "boolean", "null"] } }
+      },
+      "required": ["start_path", "seed"],
+      "additionalProperties": false
+    },
+    "oracle": {
+      "type": "object",
+      "properties": {
+        "checkpoints": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 50,
+          "items": {
+            "type": "object",
+            "properties": {
+              "checkpoint_id": { "$ref": "#/$defs/id" },
+              "after_operations": { "type": "array", "items": { "$ref": "#/$defs/operation" }, "maxItems": 50 },
+              "acceptable_next": { "type": "array", "items": { "$ref": "#/$defs/expectedDecision" }, "minItems": 1, "maxItems": 10 }
+            },
+            "required": ["checkpoint_id", "after_operations", "acceptable_next"],
+            "additionalProperties": false
+          }
+        },
+        "terminal": {
+          "oneOf": [
+            { "type": "object", "properties": { "operation": { "const": "finish" }, "outcome": { "enum": ["pass", "fail"] } }, "required": ["operation", "outcome"], "additionalProperties": false },
+            { "type": "object", "properties": { "operation": { "const": "request_human_help" }, "reason": { "enum": ["ambiguous_goal", "missing_information", "sensitive_action", "blocked", "other"] } }, "required": ["operation", "reason"], "additionalProperties": false }
+          ]
+        },
+        "max_steps": { "type": "integer", "minimum": 1, "maximum": 100 }
+      },
+      "required": ["checkpoints", "terminal", "max_steps"],
+      "additionalProperties": false
+    }
+  },
+  "required": ["contract_version", "case_id", "title", "objective", "split", "tags", "setup", "oracle"],
+  "additionalProperties": false,
+  "$defs": {
+    "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$" },
+    "operation": { "enum": ["navigate", "inspect", "click", "type", "read_diagnostics", "take_screenshot", "finish", "request_human_help"] },
+    "expectedDecision": {
+      "type": "object",
+      "properties": {
+        "operation": { "$ref": "#/$defs/operation" },
+        "target": {
+          "type": "object",
+          "properties": { "role": { "type": "string", "minLength": 1, "maxLength": 80 }, "name": { "type": "string", "maxLength": 500 } },
+          "required": ["role", "name"],
+          "additionalProperties": false
+        },
+        "input_contains": { "type": "object", "maxProperties": 20, "additionalProperties": true }
+      },
+      "required": ["operation"],
+      "additionalProperties": false
+    }
+  }
+}

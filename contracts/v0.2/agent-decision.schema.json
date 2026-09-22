@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://qa-agent-lm.dev/contracts/v0.2/agent-decision.schema.json",
+  "title": "Agent next decision v0.2",
+  "type": "object",
+  "properties": {
+    "contract_version": { "const": "0.2" },
+    "operation": { "enum": ["navigate", "inspect", "click", "type", "read_diagnostics", "take_screenshot", "finish", "request_human_help"] },
+    "input": { "type": "object" }
+  },
+  "required": ["contract_version", "operation", "input"],
+  "allOf": [
+    { "if": { "properties": { "operation": { "const": "navigate" } }, "required": ["operation"] }, "then": { "properties": { "input": { "$ref": "https://qa-agent-lm.dev/contracts/v0.1/browser-tool-request.schema.json#/$defs/navigateInput" } } } },
+    { "if": { "properties": { "operation": { "const": "inspect" } }, "required": ["operation"] }, "then": { "properties": { "input": { "$ref": "https://qa-agent-lm.dev/contracts/v0.1/browser-tool-request.schema.json#/$defs/inspectInput" } } } },
+    { "if": { "properties": { "operation": { "const": "click" } }, "required": ["operation"] }, "then": { "properties": { "input": { "$ref": "https://qa-agent-lm.dev/contracts/v0.1/browser-tool-request.schema.json#/$defs/clickInput" } } } },
+    { "if": { "properties": { "operation": { "const": "type" } }, "required": ["operation"] }, "then": { "properties": { "input": { "$ref": "https://qa-agent-lm.dev/contracts/v0.1/browser-tool-request.schema.json#/$defs/typeInput" } } } },
+    { "if": { "properties": { "operation": { "const": "read_diagnostics" } }, "required": ["operation"] }, "then": { "properties": { "input": { "$ref": "https://qa-agent-lm.dev/contracts/v0.1/browser-tool-request.schema.json#/$defs/diagnosticsInput" } } } },
+    { "if": { "properties": { "operation": { "const": "take_screenshot" } }, "required": ["operation"] }, "then": { "properties": { "input": { "$ref": "https://qa-agent-lm.dev/contracts/v0.1/browser-tool-request.schema.json#/$defs/screenshotInput" } } } },
+    { "if": { "properties": { "operation": { "const": "finish" } }, "required": ["operation"] }, "then": { "properties": { "input": { "$ref": "https://qa-agent-lm.dev/contracts/v0.1/browser-tool-request.schema.json#/$defs/finishInput" } } } },
+    { "if": { "properties": { "operation": { "const": "request_human_help" } }, "required": ["operation"] }, "then": { "properties": { "input": { "$ref": "https://qa-agent-lm.dev/contracts/v0.1/browser-tool-request.schema.json#/$defs/humanHelpInput" } } } }
+  ],
+  "unevaluatedProperties": false
+}

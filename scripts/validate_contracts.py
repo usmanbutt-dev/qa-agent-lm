@@ -1,4 +1,4 @@
-"""Validate browser-tool schemas and their positive/negative contract cases."""
+"""Validate all versioned schemas and their positive/negative contract cases."""
 
 from __future__ import annotations
 
@@ -8,10 +8,13 @@ from pathlib import Path
 from typing import Any, cast
 
 from jsonschema import Draft202012Validator, FormatChecker
+from referencing import Registry, Resource
 
 ROOT = Path(__file__).resolve().parents[1]
-CONTRACTS = ROOT / "contracts" / "v0.1"
-CASES_PATH = ROOT / "tests" / "contracts" / "cases.json"
+V01_CONTRACTS = ROOT / "contracts" / "v0.1"
+V02_CONTRACTS = ROOT / "contracts" / "v0.2"
+V01_CASES_PATH = ROOT / "tests" / "contracts" / "cases.json"
+V02_CASES_PATH = ROOT / "tests" / "contracts" / "agent-benchmark-cases.json"
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -39,30 +42,48 @@ def validate_cases(
 
 
 def main() -> int:
-    request_schema = load_json(CONTRACTS / "browser-tool-request.schema.json")
-    response_schema = load_json(CONTRACTS / "browser-tool-response.schema.json")
-    cases = load_json(CASES_PATH)
+    browser_request = load_json(V01_CONTRACTS / "browser-tool-request.schema.json")
+    schemas = {
+        "browser request": browser_request,
+        "browser response": load_json(V01_CONTRACTS / "browser-tool-response.schema.json"),
+        "agent context": load_json(V02_CONTRACTS / "agent-context.schema.json"),
+        "agent decision": load_json(V02_CONTRACTS / "agent-decision.schema.json"),
+        "benchmark case": load_json(V02_CONTRACTS / "benchmark-case.schema.json"),
+    }
+    for schema in schemas.values():
+        Draft202012Validator.check_schema(schema)
 
-    Draft202012Validator.check_schema(request_schema)
-    Draft202012Validator.check_schema(response_schema)
-
-    request_validator = Draft202012Validator(request_schema, format_checker=FormatChecker())
-    response_validator = Draft202012Validator(response_schema, format_checker=FormatChecker())
-
-    failures = validate_cases(
-        request_validator,
-        cases["valid_requests"],
-        cases["invalid_requests"],
-        "request",
+    registry = Registry().with_resource(
+        str(browser_request["$id"]), Resource.from_contents(browser_request)
     )
-    failures.extend(
-        validate_cases(
-            response_validator,
-            cases["valid_responses"],
-            cases["invalid_responses"],
-            "response",
+    validators = {
+        name: Draft202012Validator(
+            schema,
+            format_checker=FormatChecker(),
+            registry=registry,
         )
+        for name, schema in schemas.items()
+    }
+    v01_cases = load_json(V01_CASES_PATH)
+    v02_cases = load_json(V02_CASES_PATH)
+    groups = (
+        ("browser request", v01_cases["valid_requests"], v01_cases["invalid_requests"]),
+        (
+            "browser response",
+            v01_cases["valid_responses"],
+            v01_cases["invalid_responses"],
+        ),
+        ("agent context", v02_cases["valid_contexts"], v02_cases["invalid_contexts"]),
+        ("agent decision", v02_cases["valid_decisions"], v02_cases["invalid_decisions"]),
+        (
+            "benchmark case",
+            v02_cases["valid_benchmark_cases"],
+            v02_cases["invalid_benchmark_cases"],
+        ),
     )
+    failures: list[str] = []
+    for label, valid_cases, invalid_cases in groups:
+        failures.extend(validate_cases(validators[label], valid_cases, invalid_cases, label))
 
     if failures:
         print("Contract validation failed:")
@@ -70,8 +91,8 @@ def main() -> int:
             print(f"- {failure}")
         return 1
 
-    total_valid = len(cases["valid_requests"]) + len(cases["valid_responses"])
-    total_invalid = len(cases["invalid_requests"]) + len(cases["invalid_responses"])
+    total_valid = sum(len(valid_cases) for _, valid_cases, _ in groups)
+    total_invalid = sum(len(invalid_cases) for _, _, invalid_cases in groups)
     print(f"Contract validation passed: {total_valid} valid and {total_invalid} invalid cases")
     return 0
 

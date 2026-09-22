@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://qa-agent-lm.dev/contracts/v0.2/agent-context.schema.json",
+  "title": "Agent decision context v0.2",
+  "type": "object",
+  "properties": {
+    "contract_version": { "const": "0.2" },
+    "case_id": { "$ref": "#/$defs/id" },
+    "objective": { "type": "string", "minLength": 1, "maxLength": 2000 },
+    "observation": {
+      "type": "object",
+      "properties": {
+        "observation_id": { "$ref": "#/$defs/id" },
+        "url": { "type": "string", "format": "uri", "maxLength": 2048 },
+        "elements": {
+          "type": "array",
+          "maxItems": 200,
+          "items": {
+            "type": "object",
+            "properties": {
+              "element_ref": { "type": "string", "pattern": "^el_[A-Za-z0-9_-]+$", "maxLength": 128 },
+              "role": { "type": "string", "minLength": 1, "maxLength": 80 },
+              "name": { "type": "string", "maxLength": 500 },
+              "disabled": { "type": "boolean" }
+            },
+            "required": ["element_ref", "role", "name", "disabled"],
+            "additionalProperties": false
+          }
+        },
+        "truncated": { "type": "boolean" }
+      },
+      "required": ["observation_id", "url", "elements", "truncated"],
+      "additionalProperties": false
+    },
+    "history": {
+      "type": "array",
+      "maxItems": 50,
+      "items": {
+        "type": "object",
+        "properties": {
+          "operation": { "$ref": "#/$defs/operation" },
+          "status": { "enum": ["success", "error"] },
+          "summary": { "type": "string", "minLength": 1, "maxLength": 1000 }
+        },
+        "required": ["operation", "status", "summary"],
+        "additionalProperties": false
+      }
+    },
+    "available_operations": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/operation" },
+      "minItems": 1,
+      "maxItems": 8,
+      "uniqueItems": true
+    },
+    "limits": {
+      "type": "object",
+      "properties": {
+        "remaining_steps": { "type": "integer", "minimum": 1 },
+        "remaining_time_ms": { "type": "integer", "minimum": 1 }
+      },
+      "required": ["remaining_steps", "remaining_time_ms"],
+      "additionalProperties": false
+    }
+  },
+  "required": ["contract_version", "case_id", "objective", "observation", "history", "available_operations", "limits"],
+  "additionalProperties": false,
+  "$defs": {
+    "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$" },
+    "operation": { "enum": ["navigate", "inspect", "click", "type", "read_diagnostics", "take_screenshot", "finish", "request_human_help"] }
+  }
+}
