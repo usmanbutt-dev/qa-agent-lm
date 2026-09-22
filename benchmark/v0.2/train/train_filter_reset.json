@@ -1,0 +1,41 @@
+{
+  "contract_version": "0.2",
+  "case_id": "train_filter_reset",
+  "title": "Clear filters",
+  "objective": "Recover from an accidentally selected archived-items filter.",
+  "split": "train",
+  "tags": [
+    "recovery"
+  ],
+  "setup": {
+    "start_path": "/",
+    "seed": {
+      "fixture": "filter_reset"
+    }
+  },
+  "oracle": {
+    "checkpoints": [
+      {
+        "checkpoint_id": "next_step",
+        "after_operations": [
+          "navigate",
+          "inspect"
+        ],
+        "acceptable_next": [
+          {
+            "operation": "click",
+            "target": {
+              "role": "button",
+              "name": "Clear filters"
+            }
+          }
+        ]
+      }
+    ],
+    "terminal": {
+      "operation": "finish",
+      "outcome": "pass"
+    },
+    "max_steps": 10
+  }
+}

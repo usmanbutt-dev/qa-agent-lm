@@ -1,0 +1,41 @@
+{
+  "contract_version": "0.2",
+  "case_id": "development_calendar_event",
+  "title": "Create event",
+  "objective": "Verify a scheduled meeting appears on the weekly calendar.",
+  "split": "development",
+  "tags": [
+    "pass"
+  ],
+  "setup": {
+    "start_path": "/",
+    "seed": {
+      "fixture": "calendar_event"
+    }
+  },
+  "oracle": {
+    "checkpoints": [
+      {
+        "checkpoint_id": "next_step",
+        "after_operations": [
+          "navigate",
+          "inspect"
+        ],
+        "acceptable_next": [
+          {
+            "operation": "click",
+            "target": {
+              "role": "button",
+              "name": "Create event"
+            }
+          }
+        ]
+      }
+    ],
+    "terminal": {
+      "operation": "finish",
+      "outcome": "pass"
+    },
+    "max_steps": 10
+  }
+}

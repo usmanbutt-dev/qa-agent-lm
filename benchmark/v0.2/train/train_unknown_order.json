@@ -1,0 +1,40 @@
+{
+  "contract_version": "0.2",
+  "case_id": "train_unknown_order",
+  "title": "Order number",
+  "objective": "Check the order status without an order number.",
+  "split": "train",
+  "tags": [
+    "ambiguity"
+  ],
+  "setup": {
+    "start_path": "/",
+    "seed": {
+      "fixture": "unknown_order"
+    }
+  },
+  "oracle": {
+    "checkpoints": [
+      {
+        "checkpoint_id": "next_step",
+        "after_operations": [
+          "navigate",
+          "inspect"
+        ],
+        "acceptable_next": [
+          {
+            "operation": "request_human_help",
+            "input_contains": {
+              "reason": "ambiguous_goal"
+            }
+          }
+        ]
+      }
+    ],
+    "terminal": {
+      "operation": "request_human_help",
+      "reason": "ambiguous_goal"
+    },
+    "max_steps": 10
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "contract_version": "0.2",
+  "case_id": "development_modal_cancel",
+  "title": "Cancel export",
+  "objective": "Dismiss an unintended export modal and return to the report.",
+  "split": "development",
+  "tags": [
+    "recovery"
+  ],
+  "setup": {
+    "start_path": "/",
+    "seed": {
+      "fixture": "modal_cancel"
+    }
+  },
+  "oracle": {
+    "checkpoints": [
+      {
+        "checkpoint_id": "next_step",
+        "after_operations": [
+          "navigate",
+          "inspect"
+        ],
+        "acceptable_next": [
+          {
+            "operation": "click",
+            "target": {
+              "role": "button",
+              "name": "Cancel export"
+            }
+          }
+        ]
+      }
+    ],
+    "terminal": {
+      "operation": "finish",
+      "outcome": "pass"
+    },
+    "max_steps": 10
+  }
+}

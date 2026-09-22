@@ -1,0 +1,40 @@
+{
+  "contract_version": "0.2",
+  "case_id": "train_missing_locale",
+  "title": "Language",
+  "objective": "Verify translated checkout copy without a specified locale.",
+  "split": "train",
+  "tags": [
+    "ambiguity"
+  ],
+  "setup": {
+    "start_path": "/",
+    "seed": {
+      "fixture": "missing_locale"
+    }
+  },
+  "oracle": {
+    "checkpoints": [
+      {
+        "checkpoint_id": "next_step",
+        "after_operations": [
+          "navigate",
+          "inspect"
+        ],
+        "acceptable_next": [
+          {
+            "operation": "request_human_help",
+            "input_contains": {
+              "reason": "missing_information"
+            }
+          }
+        ]
+      }
+    ],
+    "terminal": {
+      "operation": "request_human_help",
+      "reason": "missing_information"
+    },
+    "max_steps": 10
+  }
+}

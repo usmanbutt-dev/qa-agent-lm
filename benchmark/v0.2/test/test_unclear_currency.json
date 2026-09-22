@@ -1,0 +1,40 @@
+{
+  "contract_version": "0.2",
+  "case_id": "test_unclear_currency",
+  "title": "Currency",
+  "objective": "Check pricing for a region when no currency is specified.",
+  "split": "test",
+  "tags": [
+    "ambiguity"
+  ],
+  "setup": {
+    "start_path": "/",
+    "seed": {
+      "fixture": "unclear_currency"
+    }
+  },
+  "oracle": {
+    "checkpoints": [
+      {
+        "checkpoint_id": "next_step",
+        "after_operations": [
+          "navigate",
+          "inspect"
+        ],
+        "acceptable_next": [
+          {
+            "operation": "request_human_help",
+            "input_contains": {
+              "reason": "missing_information"
+            }
+          }
+        ]
+      }
+    ],
+    "terminal": {
+      "operation": "request_human_help",
+      "reason": "missing_information"
+    },
+    "max_steps": 10
+  }
+}

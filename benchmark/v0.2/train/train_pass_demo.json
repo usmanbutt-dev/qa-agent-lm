@@ -1,0 +1,42 @@
+{
+  "contract_version": "0.2",
+  "case_id": "train_pass_demo",
+  "title": "Run successful check",
+  "objective": "Verify the staging deployment check succeeds.",
+  "split": "train",
+  "tags": [
+    "pass"
+  ],
+  "setup": {
+    "start_path": "/",
+    "seed": {
+      "fixture": "pass_demo"
+    }
+  },
+  "oracle": {
+    "checkpoints": [
+      {
+        "checkpoint_id": "choose_check",
+        "after_operations": [
+          "navigate",
+          "inspect",
+          "type"
+        ],
+        "acceptable_next": [
+          {
+            "operation": "click",
+            "target": {
+              "role": "button",
+              "name": "Run successful check"
+            }
+          }
+        ]
+      }
+    ],
+    "terminal": {
+      "operation": "finish",
+      "outcome": "pass"
+    },
+    "max_steps": 10
+  }
+}

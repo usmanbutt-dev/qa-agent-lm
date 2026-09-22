@@ -1,0 +1,41 @@
+{
+  "contract_version": "0.2",
+  "case_id": "train_upload_reject",
+  "title": "Upload image",
+  "objective": "Detect that the image upload rejects a valid PNG fixture.",
+  "split": "train",
+  "tags": [
+    "defect"
+  ],
+  "setup": {
+    "start_path": "/",
+    "seed": {
+      "fixture": "upload_reject"
+    }
+  },
+  "oracle": {
+    "checkpoints": [
+      {
+        "checkpoint_id": "next_step",
+        "after_operations": [
+          "navigate",
+          "inspect"
+        ],
+        "acceptable_next": [
+          {
+            "operation": "click",
+            "target": {
+              "role": "button",
+              "name": "Upload image"
+            }
+          }
+        ]
+      }
+    ],
+    "terminal": {
+      "operation": "finish",
+      "outcome": "fail"
+    },
+    "max_steps": 10
+  }
+}

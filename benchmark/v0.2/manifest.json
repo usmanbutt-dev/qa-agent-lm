@@ -1,0 +1,425 @@
+{
+  "cases": [
+    {
+      "case_id": "development_calendar_event",
+      "contexts": [
+        {
+          "checkpoint_id": "next_step",
+          "path": "development/development_calendar_event.next_step.context.json",
+          "sha256": "a3ef3fb3be3907dbcc10f5207367b14e4e86dbbf333fe81685d952937ef98759"
+        }
+      ],
+      "family": "calendar_event",
+      "path": "development/development_calendar_event.json",
+      "sha256": "99d6a5101bf3835692f00c95bd930e32a582ac50688468e7efe005f94a7418af",
+      "split": "development"
+    },
+    {
+      "case_id": "development_cart_quantity",
+      "contexts": [
+        {
+          "checkpoint_id": "next_step",
+          "path": "development/development_cart_quantity.next_step.context.json",
+          "sha256": "9a8b207b92b99dfffc216d210d019a56b5287ef3ba41e01ce565f0089d9798af"
+        }
+      ],
+      "family": "cart_quantity",
+      "path": "development/development_cart_quantity.json",
+      "sha256": "aa327fc7eb442ddfcd3cbe8de4a7d96adf56acccf55db18de8ff665beafdf693",
+      "split": "development"
+    },
+    {
+      "case_id": "development_defect_demo",
+      "contexts": [
+        {
+          "checkpoint_id": "choose_failure",
+          "path": "development/development_defect_demo.choose_failure.context.json",
+          "sha256": "b7b4fe0e6c4268cd469e8db718ef0b8af0b1553d9387f84826339c82ca626045"
+        }
+      ],
+      "family": "defect_demo",
+      "path": "development/development_defect_demo.json",
+      "sha256": "7efafc4547e1105edcdf1726e58aa22c73112a47839bcc3299fe08e8d00c249d",
+      "split": "development"
+    },
+    {
+      "case_id": "development_draft_restore",
+      "contexts": [
+        {
+          "checkpoint_id": "next_step",
+          "path": "development/development_draft_restore.next_step.context.json",
+          "sha256": "8a1651d3b9644067a5c764a3caa9d0530aaafe9ce92371f75c5d1c98e5fb1a9f"
+        }
+      ],
+      "family": "draft_restore",
+      "path": "development/development_draft_restore.json",
+      "sha256": "b00a7ce17f92691550425e3ac202f4fb20fc1491b83c74225f456da7021754b1",
+      "split": "development"
+    },
+    {
+      "case_id": "development_modal_cancel",
+      "contexts": [
+        {
+          "checkpoint_id": "next_step",
+          "path": "development/development_modal_cancel.next_step.context.json",
+          "sha256": "b4a46b4b64c111d783be0356a4f381ec49e6312c5f9db3214d66db6b0355751c"
+        }
+      ],
+      "family": "modal_cancel",
+      "path": "development/development_modal_cancel.json",
+      "sha256": "d4dcb674c6e9f6c111816c323cffcbd01ff6026d7bed63607edb76deaad9f58b",
+      "split": "development"
+    },
+    {
+      "case_id": "development_profile_photo",
+      "contexts": [
+        {
+          "checkpoint_id": "next_step",
+          "path": "development/development_profile_photo.next_step.context.json",
+          "sha256": "8ed3f0b424f2222c16c3c01d34974b2cae7272ab66b757042342c45d9da5d3b9"
+        }
+      ],
+      "family": "profile_photo",
+      "path": "development/development_profile_photo.json",
+      "sha256": "8a780872d03d08b890b5de84967ed42f5e73d214747508b2088a3d44ffafcfc6",
+      "split": "development"
+    },
+    {
+      "case_id": "development_publish_notice",
+      "contexts": [
+        {
+          "checkpoint_id": "next_step",
+          "path": "development/development_publish_notice.next_step.context.json",
+          "sha256": "e4d8f620e7f5c3f41391597f73b686a608eadea62bf765e40808a192b3ed4ebe"
+        }
+      ],
+      "family": "publish_notice",
+      "path": "development/development_publish_notice.json",
+      "sha256": "4de4fac45555c08035b8b3eed1ab1865b4266e50927fb50e67749d7425fe9cbc",
+      "split": "development"
+    },
+    {
+      "case_id": "development_rotate_key",
+      "contexts": [
+        {
+          "checkpoint_id": "next_step",
+          "path": "development/development_rotate_key.next_step.context.json",
+          "sha256": "bc31e8795e4564a9a42eb2de13096ddba623e8abbb54d573a14b7b874d0c2cf2"
+        }
+      ],
+      "family": "rotate_key",
+      "path": "development/development_rotate_key.json",
+      "sha256": "fcf07fbb252a64c79ff5551bea2773f188ca4e096fe02abefebe3bb7304e9d1f",
+      "split": "development"
+    },
+    {
+      "case_id": "development_unknown_date",
+      "contexts": [
+        {
+          "checkpoint_id": "next_step",
+          "path": "development/development_unknown_date.next_step.context.json",
+          "sha256": "468423f0a6614a533fd065f2b3a7fad0ef25f34dfaefe47dbe39c89483a52ce4"
+        }
+      ],
+      "family": "unknown_date",
+      "path": "development/development_unknown_date.json",
+      "sha256": "f76c51c1234e585cbddbc3775c9199b7b8a60e5919b5d9cb2b9ddb7bf88c101b",
+      "split": "development"
+    },
+    {
+      "case_id": "development_unnamed_project",
+      "contexts": [
+        {
+          "checkpoint_id": "next_step",
+          "path": "development/development_unnamed_project.next_step.context.json",
+          "sha256": "e6607e400cadfa23ec309eb0d63a67c1b87c7fbf462ef33af6a0c3ddfe8be3b0"
+        }
+      ],
+      "family": "unnamed_project",
+      "path": "development/development_unnamed_project.json",
+      "sha256": "bcf5c27521d7c8f7efd12d58f8d480d9e864aeee2e706d42be02e890507c1f3a",
+      "split": "development"
+    },
+    {
+      "case_id": "test_bulk_email",
+      "contexts": [
+        {
+          "checkpoint_id": "next_step",
+          "path": "test/test_bulk_email.next_step.context.json",
+          "sha256": "13146bae26f5d80b3b01b0e6a3a95f9c58b9e0f87cbd433134292e2716a45768"
+        }
+      ],
+      "family": "bulk_email",
+      "path": "test/test_bulk_email.json",
+      "sha256": "0788d8bdc19b868a97f1afffdb65edccf638471015ba3281349b661c062efaf8",
+      "split": "test"
+    },
+    {
+      "case_id": "test_download_receipt",
+      "contexts": [
+        {
+          "checkpoint_id": "next_step",
+          "path": "test/test_download_receipt.next_step.context.json",
+          "sha256": "02f215a45bb153f1bb59f2df6c901fee845c524b38f271e07eeaf8621e6196d0"
+        }
+      ],
+      "family": "download_receipt",
+      "path": "test/test_download_receipt.json",
+      "sha256": "28a2f30d023e2200d89d258d58cf5629f3f31045939595d5236099c368bb64cd",
+      "split": "test"
+    },
+    {
+      "case_id": "test_file_replace",
+      "contexts": [
+        {
+          "checkpoint_id": "next_step",
+          "path": "test/test_file_replace.next_step.context.json",
+          "sha256": "e690c047240ed0511444e1126338b4d9883e2fb3cd2a094b47296a267d9ed080"
+        }
+      ],
+      "family": "file_replace",
+      "path": "test/test_file_replace.json",
+      "sha256": "775155c60ddb1ec89a982d9c246b749557609005d8718e013a73fb084f19cf97",
+      "split": "test"
+    },
+    {
+      "case_id": "test_help_article",
+      "contexts": [
+        {
+          "checkpoint_id": "next_step",
+          "path": "test/test_help_article.next_step.context.json",
+          "sha256": "cb454d0c7daeb8d3e87896ae25bc4f41a331d39a00510c18de2f5db9712a9e44"
+        }
+      ],
+      "family": "help_article",
+      "path": "test/test_help_article.json",
+      "sha256": "94f365eaec8dfb1af338909f3d0bd0de53b123085f3a46119796806b32d21a41",
+      "split": "test"
+    },
+    {
+      "case_id": "test_multiple_users",
+      "contexts": [
+        {
+          "checkpoint_id": "next_step",
+          "path": "test/test_multiple_users.next_step.context.json",
+          "sha256": "abf9f3da3f25f97bfb6efa267f872bfc0e12d3d846efe68a2f155a16e9a42f54"
+        }
+      ],
+      "family": "multiple_users",
+      "path": "test/test_multiple_users.json",
+      "sha256": "e55da7cc634c01b2e074d39d0f248cc165819b5ae78c477e6c9155de7ae85ee4",
+      "split": "test"
+    },
+    {
+      "case_id": "test_notification_toggle",
+      "contexts": [
+        {
+          "checkpoint_id": "next_step",
+          "path": "test/test_notification_toggle.next_step.context.json",
+          "sha256": "3d49fb3a6dd644e5d6857cb2da71280d22cff174e45b7bddd09e654573dc0b9b"
+        }
+      ],
+      "family": "notification_toggle",
+      "path": "test/test_notification_toggle.json",
+      "sha256": "0b7f776748f23c30b5b6f9cb6b5daed3740810b19625e06c00511725ec36cff0",
+      "split": "test"
+    },
+    {
+      "case_id": "test_pagination_repeat",
+      "contexts": [
+        {
+          "checkpoint_id": "next_step",
+          "path": "test/test_pagination_repeat.next_step.context.json",
+          "sha256": "ddcf4f26dedb86fd65cce6ee9b73af178060ed52f6f7c7849fcef17dbe9a4c41"
+        }
+      ],
+      "family": "pagination_repeat",
+      "path": "test/test_pagination_repeat.json",
+      "sha256": "d7c5516a4274779185a4d0c0074c5fea6474e82d1b89e7156c58d5a4f889d83e",
+      "split": "test"
+    },
+    {
+      "case_id": "test_safety_demo",
+      "contexts": [
+        {
+          "checkpoint_id": "handoff",
+          "path": "test/test_safety_demo.handoff.context.json",
+          "sha256": "1afa98b10c8494d7d4bb44e9cacbdaa5341f8a7dbd975caea69a2d2a13c9ed37"
+        }
+      ],
+      "family": "safety_demo",
+      "path": "test/test_safety_demo.json",
+      "sha256": "45bfa61405ce37f811e143b2f9442b32f21697d56da1171b5b6e7252662609e5",
+      "split": "test"
+    },
+    {
+      "case_id": "test_tab_return",
+      "contexts": [
+        {
+          "checkpoint_id": "next_step",
+          "path": "test/test_tab_return.next_step.context.json",
+          "sha256": "9dd0783871630f1f7a848db34ab7662150da105c0f35f8c0e8e6e6b5e2285cc9"
+        }
+      ],
+      "family": "tab_return",
+      "path": "test/test_tab_return.json",
+      "sha256": "728894bb5d7b501d22552f9d7cbc84c27adb814961b1870dad5ec8d18c83e2cb",
+      "split": "test"
+    },
+    {
+      "case_id": "test_unclear_currency",
+      "contexts": [
+        {
+          "checkpoint_id": "next_step",
+          "path": "test/test_unclear_currency.next_step.context.json",
+          "sha256": "e220a75cfa389610cfc4a4fffe7a390e24637b3fe84480ffba99f624157feefd"
+        }
+      ],
+      "family": "unclear_currency",
+      "path": "test/test_unclear_currency.json",
+      "sha256": "f72eafa5e62f806ea0a2cd59b201403ba65fb64d86ed5bb2895f184021d7abd6",
+      "split": "test"
+    },
+    {
+      "case_id": "train_delete_account",
+      "contexts": [
+        {
+          "checkpoint_id": "next_step",
+          "path": "train/train_delete_account.next_step.context.json",
+          "sha256": "9f974ef9e2fb3b5c4dd3a423f71cc240582a5e022729d124e55800a231afd47d"
+        }
+      ],
+      "family": "delete_account",
+      "path": "train/train_delete_account.json",
+      "sha256": "bd77800fea86a04351e37bac2f79f2e92a55b430effddbccdea1ccccda6399a8",
+      "split": "train"
+    },
+    {
+      "case_id": "train_filter_reset",
+      "contexts": [
+        {
+          "checkpoint_id": "next_step",
+          "path": "train/train_filter_reset.next_step.context.json",
+          "sha256": "1bd20df2a57ce4080e04d3bb7cd6c18ef3d0fcf9c07849a9399cc0d5c89343b9"
+        }
+      ],
+      "family": "filter_reset",
+      "path": "train/train_filter_reset.json",
+      "sha256": "a51c624ce805446adf6caa5fe7968cf4b04c4e962baffa344c91293f31e5e31e",
+      "split": "train"
+    },
+    {
+      "case_id": "train_form_typo",
+      "contexts": [
+        {
+          "checkpoint_id": "next_step",
+          "path": "train/train_form_typo.next_step.context.json",
+          "sha256": "cb101d9772451d24dc319232b13b450de186b00d425360f59921a291c892a80f"
+        }
+      ],
+      "family": "form_typo",
+      "path": "train/train_form_typo.json",
+      "sha256": "d619c1ab1898483839990163abc4fe812941ef5fd161b6332ccd01bafdb4be34",
+      "split": "train"
+    },
+    {
+      "case_id": "train_invoice_total",
+      "contexts": [
+        {
+          "checkpoint_id": "next_step",
+          "path": "train/train_invoice_total.next_step.context.json",
+          "sha256": "744c79298dcac90e96039542194d55e796b7a4825c62dcf760ba2566c1df920f"
+        }
+      ],
+      "family": "invoice_total",
+      "path": "train/train_invoice_total.json",
+      "sha256": "03ee53eff7d002aa8ebbf07b0239aa8c9180cb15c907d1a3fc5b3bb5fe981b4a",
+      "split": "train"
+    },
+    {
+      "case_id": "train_missing_locale",
+      "contexts": [
+        {
+          "checkpoint_id": "next_step",
+          "path": "train/train_missing_locale.next_step.context.json",
+          "sha256": "4035e1137c74a34ee534dee8265de895f6da99580b901a71a6e9735bd8c0e93a"
+        }
+      ],
+      "family": "missing_locale",
+      "path": "train/train_missing_locale.json",
+      "sha256": "00f14765870a49ed8fc47835f75f040540ced40a1a4a33f5cb90c6f5a6407034",
+      "split": "train"
+    },
+    {
+      "case_id": "train_pass_demo",
+      "contexts": [
+        {
+          "checkpoint_id": "choose_check",
+          "path": "train/train_pass_demo.choose_check.context.json",
+          "sha256": "c3fec38be64f7437e7a43e56c59b876748618afd37e93d13540f4277d5d0c0eb"
+        }
+      ],
+      "family": "pass_demo",
+      "path": "train/train_pass_demo.json",
+      "sha256": "715b6fc2199380fa6a19c09180616593bbf0a0a0e63799d0f43dbc997b0e8e8e",
+      "split": "train"
+    },
+    {
+      "case_id": "train_refund_customer",
+      "contexts": [
+        {
+          "checkpoint_id": "next_step",
+          "path": "train/train_refund_customer.next_step.context.json",
+          "sha256": "791d4ef99a3da94d32c8757fe1b5d3c784c02c0b2ac659b0613c928811641140"
+        }
+      ],
+      "family": "refund_customer",
+      "path": "train/train_refund_customer.json",
+      "sha256": "53e9fab4a34e16c588010ecda43aa110f71bd820bfb3ff4220f19b95b2c8d740",
+      "split": "train"
+    },
+    {
+      "case_id": "train_search_empty",
+      "contexts": [
+        {
+          "checkpoint_id": "next_step",
+          "path": "train/train_search_empty.next_step.context.json",
+          "sha256": "0b773069ea67e9de39415d53ad6654996b15df892acf3d3b8a62f1b4b774a36a"
+        }
+      ],
+      "family": "search_empty",
+      "path": "train/train_search_empty.json",
+      "sha256": "cd5c1953fbde70202ec0f35dca3025a87ac4e68649c86f283470eb786af86c26",
+      "split": "train"
+    },
+    {
+      "case_id": "train_unknown_order",
+      "contexts": [
+        {
+          "checkpoint_id": "next_step",
+          "path": "train/train_unknown_order.next_step.context.json",
+          "sha256": "94be4abf52666fedf122e39916f55a2181960a422f1a39086468427d2991fe3e"
+        }
+      ],
+      "family": "unknown_order",
+      "path": "train/train_unknown_order.json",
+      "sha256": "645bcfe80fda22a03007415625ad93332ef494788985c92971ad5b4d83fabae3",
+      "split": "train"
+    },
+    {
+      "case_id": "train_upload_reject",
+      "contexts": [
+        {
+          "checkpoint_id": "next_step",
+          "path": "train/train_upload_reject.next_step.context.json",
+          "sha256": "f6f16f7757551a718ff38550fd28314e06ef9cfed1529edf905d83504f362502"
+        }
+      ],
+      "family": "upload_reject",
+      "path": "train/train_upload_reject.json",
+      "sha256": "fe895f09dc24f6fb13ab0cdca7c72dcc30bdb39edbb0f79c82fb0072ced4b4dc",
+      "split": "train"
+    }
+  ],
+  "version": "0.2"
+}

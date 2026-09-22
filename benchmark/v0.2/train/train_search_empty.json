@@ -1,0 +1,41 @@
+{
+  "contract_version": "0.2",
+  "case_id": "train_search_empty",
+  "title": "Search catalog",
+  "objective": "Report the catalog search error for a nonexistent product.",
+  "split": "train",
+  "tags": [
+    "defect"
+  ],
+  "setup": {
+    "start_path": "/",
+    "seed": {
+      "fixture": "search_empty"
+    }
+  },
+  "oracle": {
+    "checkpoints": [
+      {
+        "checkpoint_id": "next_step",
+        "after_operations": [
+          "navigate",
+          "inspect"
+        ],
+        "acceptable_next": [
+          {
+            "operation": "click",
+            "target": {
+              "role": "button",
+              "name": "Search catalog"
+            }
+          }
+        ]
+      }
+    ],
+    "terminal": {
+      "operation": "finish",
+      "outcome": "fail"
+    },
+    "max_steps": 10
+  }
+}

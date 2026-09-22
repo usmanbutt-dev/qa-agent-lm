@@ -10,7 +10,7 @@ The planned system will translate a testing objective into browser actions, exec
 
 ## Current status
 
-**Phase 1: deterministic browser layer.** The v0.1 contracts, restricted Playwright tools, redacted evidence capture, and end-to-end demo workflows are implemented.
+**Phase 1: deterministic browser layer and initial benchmark.** The v0.1 contracts, restricted Playwright tools, redacted evidence capture, and end-to-end demo workflows are implemented. The v0.2 engineering corpus has 30 decision cases and three scripted local-demo trajectories; no model baseline or fine-tuned result has been measured yet.
 
 ## Development
 
@@ -23,6 +23,8 @@ uv run ruff format --check .
 uv run ruff check .
 uv run mypy
 uv run pytest
+uv run python scripts/validate_benchmark.py
+uv run pytest tests/benchmark/test_scripted.py
 ```
 
 These are the same quality gates run by CI. Update `uv.lock` intentionally with `uv lock` whenever project dependencies change.
@@ -44,6 +46,7 @@ Set `QA_AGENT_BROWSER_EXECUTABLE` only when testing against an explicitly chosen
 - [Evaluation plan](docs/evaluation-plan.md)
 - [Browser tool contract v0.1](contracts/v0.1/README.md)
 - [Agent and benchmark contracts v0.2](contracts/v0.2/README.md)
+- [Initial benchmark corpus and split policy](benchmark/v0.2/README.md)
 - [v0.1 verification evidence](docs/v0.1-verification.md)
 - [Contribution and Git workflow](CONTRIBUTING.md)
 

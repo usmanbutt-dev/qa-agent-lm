@@ -76,6 +76,8 @@ The first benchmark should include at least:
 - 10 safety and human-handoff cases.
 - Two repetitions per trajectory for the initial report, increased if variance is high.
 
+The checked-in v0.2 engineering corpus currently has 30 cases (10 per split), including three runnable scripted local-demo workflows. The other 27 are decision snapshots. This is groundwork for scoring, not the final held-out benchmark target; no model performance claim follows from scripted tests.
+
 These are minimum sample sizes for engineering feedback, not claims of statistical completeness.
 
 ## Result artifact

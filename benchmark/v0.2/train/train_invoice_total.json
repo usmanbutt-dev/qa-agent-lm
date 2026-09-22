@@ -1,0 +1,41 @@
+{
+  "contract_version": "0.2",
+  "case_id": "train_invoice_total",
+  "title": "Open invoice INV-104",
+  "objective": "Confirm invoice INV-104 shows the expected grand total.",
+  "split": "train",
+  "tags": [
+    "pass"
+  ],
+  "setup": {
+    "start_path": "/",
+    "seed": {
+      "fixture": "invoice_total"
+    }
+  },
+  "oracle": {
+    "checkpoints": [
+      {
+        "checkpoint_id": "next_step",
+        "after_operations": [
+          "navigate",
+          "inspect"
+        ],
+        "acceptable_next": [
+          {
+            "operation": "click",
+            "target": {
+              "role": "link",
+              "name": "Open invoice INV-104"
+            }
+          }
+        ]
+      }
+    ],
+    "terminal": {
+      "operation": "finish",
+      "outcome": "pass"
+    },
+    "max_steps": 10
+  }
+}

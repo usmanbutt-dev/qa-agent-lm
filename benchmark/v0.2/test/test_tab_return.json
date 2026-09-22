@@ -1,0 +1,41 @@
+{
+  "contract_version": "0.2",
+  "case_id": "test_tab_return",
+  "title": "Sales",
+  "objective": "Return from the wrong analytics tab to the sales chart.",
+  "split": "test",
+  "tags": [
+    "recovery"
+  ],
+  "setup": {
+    "start_path": "/",
+    "seed": {
+      "fixture": "tab_return"
+    }
+  },
+  "oracle": {
+    "checkpoints": [
+      {
+        "checkpoint_id": "next_step",
+        "after_operations": [
+          "navigate",
+          "inspect"
+        ],
+        "acceptable_next": [
+          {
+            "operation": "click",
+            "target": {
+              "role": "tab",
+              "name": "Sales"
+            }
+          }
+        ]
+      }
+    ],
+    "terminal": {
+      "operation": "finish",
+      "outcome": "pass"
+    },
+    "max_steps": 10
+  }
+}

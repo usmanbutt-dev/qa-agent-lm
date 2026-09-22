@@ -1,0 +1,41 @@
+{
+  "contract_version": "0.2",
+  "case_id": "test_help_article",
+  "title": "Password reset guide",
+  "objective": "Confirm the password-reset help article opens from search results.",
+  "split": "test",
+  "tags": [
+    "pass"
+  ],
+  "setup": {
+    "start_path": "/",
+    "seed": {
+      "fixture": "help_article"
+    }
+  },
+  "oracle": {
+    "checkpoints": [
+      {
+        "checkpoint_id": "next_step",
+        "after_operations": [
+          "navigate",
+          "inspect"
+        ],
+        "acceptable_next": [
+          {
+            "operation": "click",
+            "target": {
+              "role": "link",
+              "name": "Password reset guide"
+            }
+          }
+        ]
+      }
+    ],
+    "terminal": {
+      "operation": "finish",
+      "outcome": "pass"
+    },
+    "max_steps": 10
+  }
+}
