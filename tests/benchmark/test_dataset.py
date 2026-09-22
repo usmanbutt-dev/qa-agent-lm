@@ -91,3 +91,16 @@ def test_sample_decisions_score_correctly() -> None:
     }
     result = score_decision(case, "choose_check", decision)
     assert result.schema_valid and result.tool_correct and result.target_correct
+
+
+def test_demo_checkpoints_follow_the_scripted_preparation() -> None:
+    cases = {case.case_id: case for case in load_corpus(ROOT)}
+    expected = {
+        "train_pass_demo": ("choose_check", ["navigate", "inspect", "type"]),
+        "development_defect_demo": ("choose_failure", ["navigate", "inspect", "type"]),
+        "test_safety_demo": ("handoff", ["navigate", "inspect"]),
+    }
+    for case_id, (checkpoint_id, operations) in expected.items():
+        checkpoint = cases[case_id].data["oracle"]["checkpoints"][0]
+        assert checkpoint["checkpoint_id"] == checkpoint_id
+        assert checkpoint["after_operations"] == operations

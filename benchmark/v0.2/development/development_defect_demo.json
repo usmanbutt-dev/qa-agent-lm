@@ -19,7 +19,8 @@
         "checkpoint_id": "choose_failure",
         "after_operations": [
           "navigate",
-          "inspect"
+          "inspect",
+          "type"
         ],
         "acceptable_next": [
           {

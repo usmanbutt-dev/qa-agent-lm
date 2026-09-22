@@ -34,12 +34,12 @@
         {
           "checkpoint_id": "choose_failure",
           "path": "development/development_defect_demo.choose_failure.context.json",
-          "sha256": "ea310373a2f65160c26957948d0c8e3b7c7af31794a9e1bf9db21398e533bd33"
+          "sha256": "ee3138f81ddf6853e53056ba938fe7685e5f3826bc4529c4c4a0d9fb69c18d2b"
         }
       ],
       "family": "defect_demo",
       "path": "development/development_defect_demo.json",
-      "sha256": "0153e07bc35c6ed8ea420ddfb1a67c1a980e0813eb42c45e06b456df06682cbb",
+      "sha256": "41cfa626f6242a924c9f2d83bbe6f440911a0d5a0cf4bfa40d758a9a5beab2a2",
       "split": "development"
     },
     {

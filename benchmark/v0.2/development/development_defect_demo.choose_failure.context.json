@@ -25,6 +25,11 @@
       "operation": "inspect",
       "status": "success",
       "summary": "inspect completed"
+    },
+    {
+      "operation": "type",
+      "status": "success",
+      "summary": "Environment set to production"
     }
   ],
   "available_operations": [
