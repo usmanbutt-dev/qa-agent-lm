@@ -33,7 +33,7 @@ The first benchmark will expose only these conceptual operations:
 - Finish with a pass or fail result.
 - Request human help.
 
-Exact schemas will be specified and tested during `v0.1`.
+The versioned request, response, operation, and error definitions are specified in the [browser tool contract](../contracts/v0.1/README.md) and enforced by JSON Schema validation cases.
 
 ## Safety boundary
 

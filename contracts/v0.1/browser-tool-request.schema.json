@@ -1,0 +1,153 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://qa-agent-lm.dev/contracts/v0.1/browser-tool-request.schema.json",
+  "title": "Browser tool request v0.1",
+  "type": "object",
+  "properties": {
+    "contract_version": { "const": "0.1" },
+    "request_id": { "$ref": "#/$defs/id" },
+    "session_id": { "$ref": "#/$defs/id" },
+    "operation": {
+      "enum": [
+        "navigate",
+        "inspect",
+        "click",
+        "type",
+        "read_diagnostics",
+        "take_screenshot",
+        "finish",
+        "request_human_help"
+      ]
+    },
+    "input": { "type": "object" }
+  },
+  "required": ["contract_version", "request_id", "session_id", "operation", "input"],
+  "allOf": [
+    {
+      "if": { "properties": { "operation": { "const": "navigate" } }, "required": ["operation"] },
+      "then": { "properties": { "input": { "$ref": "#/$defs/navigateInput" } } }
+    },
+    {
+      "if": { "properties": { "operation": { "const": "inspect" } }, "required": ["operation"] },
+      "then": { "properties": { "input": { "$ref": "#/$defs/inspectInput" } } }
+    },
+    {
+      "if": { "properties": { "operation": { "const": "click" } }, "required": ["operation"] },
+      "then": { "properties": { "input": { "$ref": "#/$defs/clickInput" } } }
+    },
+    {
+      "if": { "properties": { "operation": { "const": "type" } }, "required": ["operation"] },
+      "then": { "properties": { "input": { "$ref": "#/$defs/typeInput" } } }
+    },
+    {
+      "if": { "properties": { "operation": { "const": "read_diagnostics" } }, "required": ["operation"] },
+      "then": { "properties": { "input": { "$ref": "#/$defs/diagnosticsInput" } } }
+    },
+    {
+      "if": { "properties": { "operation": { "const": "take_screenshot" } }, "required": ["operation"] },
+      "then": { "properties": { "input": { "$ref": "#/$defs/screenshotInput" } } }
+    },
+    {
+      "if": { "properties": { "operation": { "const": "finish" } }, "required": ["operation"] },
+      "then": { "properties": { "input": { "$ref": "#/$defs/finishInput" } } }
+    },
+    {
+      "if": { "properties": { "operation": { "const": "request_human_help" } }, "required": ["operation"] },
+      "then": { "properties": { "input": { "$ref": "#/$defs/humanHelpInput" } } }
+    }
+  ],
+  "unevaluatedProperties": false,
+  "$defs": {
+    "id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 64,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$"
+    },
+    "elementRef": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^el_[A-Za-z0-9_-]+$"
+    },
+    "navigateInput": {
+      "type": "object",
+      "properties": { "url": { "type": "string", "format": "uri", "pattern": "^https?://", "maxLength": 2048 } },
+      "required": ["url"],
+      "additionalProperties": false
+    },
+    "inspectInput": {
+      "type": "object",
+      "properties": {
+        "scope_ref": { "$ref": "#/$defs/elementRef" },
+        "max_elements": { "type": "integer", "minimum": 1, "maximum": 200, "default": 100 },
+        "include_text": { "type": "boolean", "default": true }
+      },
+      "additionalProperties": false
+    },
+    "clickInput": {
+      "type": "object",
+      "properties": { "element_ref": { "$ref": "#/$defs/elementRef" } },
+      "required": ["element_ref"],
+      "additionalProperties": false
+    },
+    "typeInput": {
+      "type": "object",
+      "properties": {
+        "element_ref": { "$ref": "#/$defs/elementRef" },
+        "text": { "type": "string", "minLength": 1, "maxLength": 10000 },
+        "replace": { "type": "boolean", "default": true }
+      },
+      "required": ["element_ref", "text"],
+      "additionalProperties": false
+    },
+    "diagnosticsInput": {
+      "type": "object",
+      "properties": {
+        "channels": {
+          "type": "array",
+          "items": { "enum": ["console", "network"] },
+          "minItems": 1,
+          "maxItems": 2,
+          "uniqueItems": true
+        },
+        "max_entries": { "type": "integer", "minimum": 1, "maximum": 200, "default": 50 }
+      },
+      "required": ["channels"],
+      "additionalProperties": false
+    },
+    "screenshotInput": {
+      "type": "object",
+      "properties": {
+        "label": { "type": "string", "minLength": 1, "maxLength": 80, "pattern": "^[A-Za-z0-9][A-Za-z0-9 _-]*$" },
+        "full_page": { "type": "boolean", "default": false }
+      },
+      "required": ["label"],
+      "additionalProperties": false
+    },
+    "finishInput": {
+      "type": "object",
+      "properties": {
+        "outcome": { "enum": ["pass", "fail"] },
+        "summary": { "type": "string", "minLength": 1, "maxLength": 2000 },
+        "evidence_ids": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/id" },
+          "maxItems": 50,
+          "uniqueItems": true
+        }
+      },
+      "required": ["outcome", "summary", "evidence_ids"],
+      "additionalProperties": false
+    },
+    "humanHelpInput": {
+      "type": "object",
+      "properties": {
+        "reason": { "enum": ["ambiguous_goal", "missing_information", "sensitive_action", "blocked", "other"] },
+        "question": { "type": "string", "minLength": 1, "maxLength": 1000 }
+      },
+      "required": ["reason", "question"],
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,249 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://qa-agent-lm.dev/contracts/v0.1/browser-tool-response.schema.json",
+  "title": "Browser tool response v0.1",
+  "type": "object",
+  "properties": {
+    "contract_version": { "const": "0.1" },
+    "request_id": { "$ref": "#/$defs/id" },
+    "operation": { "$ref": "#/$defs/operation" },
+    "status": { "enum": ["success", "error"] },
+    "result": { "type": "object" },
+    "error": { "$ref": "#/$defs/error" }
+  },
+  "required": ["contract_version", "request_id", "operation", "status"],
+  "oneOf": [
+    { "$ref": "#/$defs/navigateSuccess" },
+    { "$ref": "#/$defs/inspectSuccess" },
+    { "$ref": "#/$defs/clickSuccess" },
+    { "$ref": "#/$defs/typeSuccess" },
+    { "$ref": "#/$defs/diagnosticsSuccess" },
+    { "$ref": "#/$defs/screenshotSuccess" },
+    { "$ref": "#/$defs/finishSuccess" },
+    { "$ref": "#/$defs/humanHelpSuccess" },
+    { "$ref": "#/$defs/errorResponse" }
+  ],
+  "unevaluatedProperties": false,
+  "$defs": {
+    "id": { "type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$" },
+    "operation": { "enum": ["navigate", "inspect", "click", "type", "read_diagnostics", "take_screenshot", "finish", "request_human_help"] },
+    "successBase": {
+      "type": "object",
+      "properties": { "status": { "const": "success" } },
+      "required": ["result"],
+      "not": { "required": ["error"] }
+    },
+    "navigateSuccess": {
+      "allOf": [
+        { "$ref": "#/$defs/successBase" },
+        {
+          "properties": {
+            "operation": { "const": "navigate" },
+            "result": {
+              "type": "object",
+              "properties": {
+                "final_url": { "type": "string", "format": "uri", "maxLength": 2048 },
+                "title": { "type": "string", "maxLength": 500 }
+              },
+              "required": ["final_url", "title"],
+              "additionalProperties": false
+            }
+          }
+        }
+      ]
+    },
+    "inspectSuccess": {
+      "allOf": [
+        { "$ref": "#/$defs/successBase" },
+        {
+          "properties": {
+            "operation": { "const": "inspect" },
+            "result": {
+              "type": "object",
+              "properties": {
+                "observation_id": { "$ref": "#/$defs/id" },
+                "url": { "type": "string", "format": "uri", "maxLength": 2048 },
+                "elements": {
+                  "type": "array",
+                  "maxItems": 200,
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "element_ref": { "type": "string", "pattern": "^el_[A-Za-z0-9_-]+$", "maxLength": 128 },
+                      "role": { "type": "string", "minLength": 1, "maxLength": 80 },
+                      "name": { "type": "string", "maxLength": 500 },
+                      "disabled": { "type": "boolean" }
+                    },
+                    "required": ["element_ref", "role", "name", "disabled"],
+                    "additionalProperties": false
+                  }
+                },
+                "truncated": { "type": "boolean" }
+              },
+              "required": ["observation_id", "url", "elements", "truncated"],
+              "additionalProperties": false
+            }
+          }
+        }
+      ]
+    },
+    "clickSuccess": {
+      "allOf": [
+        { "$ref": "#/$defs/successBase" },
+        { "properties": { "operation": { "const": "click" }, "result": { "$ref": "#/$defs/interactionResult" } } }
+      ]
+    },
+    "typeSuccess": {
+      "allOf": [
+        { "$ref": "#/$defs/successBase" },
+        { "properties": { "operation": { "const": "type" }, "result": { "$ref": "#/$defs/typeResult" } } }
+      ]
+    },
+    "diagnosticsSuccess": {
+      "allOf": [
+        { "$ref": "#/$defs/successBase" },
+        {
+          "properties": {
+            "operation": { "const": "read_diagnostics" },
+            "result": {
+              "type": "object",
+              "properties": {
+                "entries": {
+                  "type": "array",
+                  "maxItems": 200,
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "evidence_id": { "$ref": "#/$defs/id" },
+                      "channel": { "enum": ["console", "network"] },
+                      "level": { "enum": ["info", "warning", "error"] },
+                      "message": { "type": "string", "maxLength": 4000 }
+                    },
+                    "required": ["evidence_id", "channel", "level", "message"],
+                    "additionalProperties": false
+                  }
+                },
+                "truncated": { "type": "boolean" }
+              },
+              "required": ["entries", "truncated"],
+              "additionalProperties": false
+            }
+          }
+        }
+      ]
+    },
+    "screenshotSuccess": {
+      "allOf": [
+        { "$ref": "#/$defs/successBase" },
+        {
+          "properties": {
+            "operation": { "const": "take_screenshot" },
+            "result": {
+              "type": "object",
+              "properties": { "artifact_id": { "$ref": "#/$defs/id" } },
+              "required": ["artifact_id"],
+              "additionalProperties": false
+            }
+          }
+        }
+      ]
+    },
+    "finishSuccess": {
+      "allOf": [
+        { "$ref": "#/$defs/successBase" },
+        {
+          "properties": {
+            "operation": { "const": "finish" },
+            "result": {
+              "type": "object",
+              "properties": { "outcome": { "enum": ["pass", "fail"] }, "state": { "const": "finished" } },
+              "required": ["outcome", "state"],
+              "additionalProperties": false
+            }
+          }
+        }
+      ]
+    },
+    "humanHelpSuccess": {
+      "allOf": [
+        { "$ref": "#/$defs/successBase" },
+        {
+          "properties": {
+            "operation": { "const": "request_human_help" },
+            "result": {
+              "type": "object",
+              "properties": { "state": { "const": "paused" } },
+              "required": ["state"],
+              "additionalProperties": false
+            }
+          }
+        }
+      ]
+    },
+    "interactionResult": {
+      "type": "object",
+      "properties": { "navigation_occurred": { "type": "boolean" } },
+      "required": ["navigation_occurred"],
+      "additionalProperties": false
+    },
+    "typeResult": {
+      "type": "object",
+      "properties": { "characters_written": { "type": "integer", "minimum": 0, "maximum": 10000 } },
+      "required": ["characters_written"],
+      "additionalProperties": false
+    },
+    "errorResponse": {
+      "type": "object",
+      "properties": { "status": { "const": "error" } },
+      "required": ["error"],
+      "not": { "required": ["result"] }
+    },
+    "error": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "enum": [
+            "INVALID_REQUEST",
+            "SESSION_NOT_FOUND",
+            "SESSION_CLOSED",
+            "ORIGIN_NOT_ALLOWED",
+            "TARGET_NOT_FOUND",
+            "STALE_ELEMENT_REFERENCE",
+            "NAVIGATION_TIMEOUT",
+            "ACTION_TIMEOUT",
+            "STEP_LIMIT_EXCEEDED",
+            "WALL_CLOCK_TIMEOUT",
+            "DOWNLOAD_BLOCKED",
+            "EXTERNAL_PROTOCOL_BLOCKED",
+            "ARTIFACT_LIMIT_EXCEEDED",
+            "TOOL_EXECUTION_FAILED"
+          ]
+        },
+        "message": { "type": "string", "minLength": 1, "maxLength": 1000 },
+        "retryable": { "type": "boolean" },
+        "details": { "type": "object", "additionalProperties": true }
+      },
+      "required": ["code", "message", "retryable", "details"],
+      "additionalProperties": false,
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "code": {
+                "enum": [
+                  "TARGET_NOT_FOUND",
+                  "STALE_ELEMENT_REFERENCE",
+                  "NAVIGATION_TIMEOUT",
+                  "ACTION_TIMEOUT"
+                ]
+              }
+            },
+            "required": ["code"]
+          },
+          "then": { "properties": { "retryable": { "const": true } } },
+          "else": { "properties": { "retryable": { "const": false } } }
+        }
+      ]
+    }
+  }
+}
