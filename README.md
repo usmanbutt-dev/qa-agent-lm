@@ -10,7 +10,7 @@ The planned system will translate a testing objective into browser actions, exec
 
 ## Current status
 
-**Phase 0: specification and evaluation design.** No model, framework, or dataset has been selected yet.
+**Phase 1: constrained browser runtime.** Contracts and automated quality gates are complete; the restricted Playwright session is in progress.
 
 ## Development
 
@@ -18,6 +18,7 @@ Requirements: Python 3.11 and [uv](https://docs.astral.sh/uv/).
 
 ```powershell
 uv sync --locked --dev
+uv run playwright install chromium
 uv run ruff format --check .
 uv run ruff check .
 uv run mypy
@@ -25,6 +26,7 @@ uv run pytest
 ```
 
 These are the same quality gates run by CI. Update `uv.lock` intentionally with `uv lock` whenever project dependencies change.
+Set `QA_AGENT_BROWSER_EXECUTABLE` only when testing against an explicitly chosen system browser instead of Playwright's Chromium build.
 
 ## Project principles
 
