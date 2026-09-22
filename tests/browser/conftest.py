@@ -37,6 +37,19 @@ class SiteHandler(BaseHTTPRequestHandler):
         if self.path == "/unsafe":
             self._html(b'<html><a href="mailto:test@example.com">Email support</a></html>')
             return
+        if self.path == "/diagnostics":
+            body = b"""<html><body>
+  <button>super-secret</button>
+  <script>
+    console.error('first super-secret');
+    console.error('second super-secret');
+    const request = new XMLHttpRequest();
+    request.open('GET', '/missing?token=super-secret', false);
+    request.send();
+  </script>
+</body></html>"""
+            self._html(body)
+            return
         if self.path == "/ok":
             self._html(b"<html><title>Allowed page</title><body>ok</body></html>")
             return

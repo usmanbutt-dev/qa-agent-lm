@@ -8,6 +8,7 @@ import re
 from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
 from enum import Enum
+from pathlib import Path
 from time import monotonic
 from types import TracebackType
 from typing import TypedDict, cast
@@ -43,8 +44,14 @@ from qa_agent_lm.browser.errors import (
     TargetNotFoundError,
     WallClockTimeoutError,
 )
+from qa_agent_lm.browser.evidence import (
+    DiagnosticsResult,
+    EvidenceCollector,
+    ScreenshotResult,
+)
 
 _ELEMENT_REF = re.compile(r"^el_(\d{6})_(\d{4})$")
+_ARTIFACT_LABEL = re.compile(r"^[A-Za-z0-9][A-Za-z0-9 _-]{0,79}$")
 _INTERACTIVE_SELECTOR = ",".join(
     (
         "a[href]",
@@ -110,6 +117,11 @@ class BrowserSessionConfig:
     action_timeout_ms: int = 5_000
     wall_clock_timeout_s: float = 60.0
     max_actions: int = 50
+    artifact_dir: Path = Path("artifacts/browser")
+    secret_values: tuple[str, ...] = ()
+    diagnostic_capacity: int = 200
+    max_artifacts: int = 20
+    max_screenshot_bytes: int = 5_000_000
     headless: bool = True
     executable_path: str | None = field(
         default_factory=lambda: os.getenv("QA_AGENT_BROWSER_EXECUTABLE")
@@ -127,6 +139,10 @@ class BrowserSessionConfig:
             raise ValueError("wall_clock_timeout_s must be positive")
         if self.max_actions <= 0:
             raise ValueError("max_actions must be positive")
+        if not 1 <= self.diagnostic_capacity <= 200:
+            raise ValueError("diagnostic_capacity must be between 1 and 200")
+        if self.max_artifacts <= 0 or self.max_screenshot_bytes <= 0:
+            raise ValueError("artifact limits must be positive")
         object.__setattr__(
             self,
             "_canonical_origins",
@@ -174,6 +190,7 @@ class BrowserSession:
         self._browser: Browser | None = None
         self._context: BrowserContext | None = None
         self._page: Page | None = None
+        self._evidence: EvidenceCollector | None = None
         self._started_at: float | None = None
         self._actions = 0
         self._observation_generation = 0
@@ -209,6 +226,15 @@ class BrowserSession:
             self._page = await self._context.new_page()
             self._page.on("download", self._on_download)
             self._context.on("page", self._on_new_page)
+            self._evidence = EvidenceCollector(
+                self._page,
+                artifact_dir=self.config.artifact_dir,
+                secret_values=self.config.secret_values,
+                diagnostic_capacity=self.config.diagnostic_capacity,
+                max_artifacts=self.config.max_artifacts,
+                max_screenshot_bytes=self.config.max_screenshot_bytes,
+            )
+            self._evidence.attach()
             self._started_at = monotonic()
             self.state = SessionState.ACTIVE
             return self
@@ -370,6 +396,37 @@ class BrowserSession:
                 lambda timeout: action(text, timeout=timeout), remaining, "Text entry"
             )
             return TypeResult(characters_written=len(text))
+
+    async def read_diagnostics(
+        self, channels: tuple[str, ...], *, max_entries: int = 50
+    ) -> DiagnosticsResult:
+        async with self._lock:
+            self._active_page()
+            self._begin_action()
+            if self._evidence is None:
+                raise SessionClosedError("Browser session is not active")
+            return self._evidence.read(channels, max_entries)
+
+    async def take_screenshot(self, label: str, *, full_page: bool = False) -> ScreenshotResult:
+        async with self._lock:
+            self._active_page()
+            remaining = self._begin_action()
+            if _ARTIFACT_LABEL.fullmatch(label) is None:
+                raise InvalidRequestError("Screenshot label is invalid")
+            if self._evidence is None:
+                raise SessionClosedError("Browser session is not active")
+            timeout_ms = min(self.config.action_timeout_ms, max(1, int(remaining * 1000)))
+            try:
+                async with asyncio.timeout(remaining):
+                    return await self._evidence.screenshot(
+                        label, full_page=full_page, timeout_ms=timeout_ms
+                    )
+            except PlaywrightTimeoutError as error:
+                raise ActionTimeoutError("Screenshot timed out") from error
+            except TimeoutError as error:
+                raise WallClockTimeoutError(
+                    "Browser session exceeded its wall-clock budget"
+                ) from error
 
     def _active_page(self) -> Page:
         if self.state is not SessionState.ACTIVE or self._page is None:
