@@ -7,4 +7,4 @@ def test_contract_validation_smoke(capsys: CaptureFixture[str]) -> None:
     assert main() == 0
 
     output = capsys.readouterr().out
-    assert "Contract validation passed: 17 valid and 10 invalid cases" in output
+    assert "Contract validation passed: 22 valid and 16 invalid cases" in output

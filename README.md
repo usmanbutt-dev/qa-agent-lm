@@ -43,6 +43,7 @@ Set `QA_AGENT_BROWSER_EXECUTABLE` only when testing against an explicitly chosen
 - [Project specification](docs/specification.md)
 - [Evaluation plan](docs/evaluation-plan.md)
 - [Browser tool contract v0.1](contracts/v0.1/README.md)
+- [Agent and benchmark contracts v0.2](contracts/v0.2/README.md)
 - [v0.1 verification evidence](docs/v0.1-verification.md)
 - [Contribution and Git workflow](CONTRIBUTING.md)
 
