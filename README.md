@@ -10,7 +10,7 @@ The planned system will translate a testing objective into browser actions, exec
 
 ## Current status
 
-**Phase 1: constrained browser runtime.** Contracts and automated quality gates are complete; the restricted Playwright session is in progress.
+**Phase 1: deterministic browser layer.** The v0.1 contracts, restricted Playwright tools, redacted evidence capture, and end-to-end demo workflows are implemented.
 
 ## Development
 
@@ -43,6 +43,7 @@ Set `QA_AGENT_BROWSER_EXECUTABLE` only when testing against an explicitly chosen
 - [Project specification](docs/specification.md)
 - [Evaluation plan](docs/evaluation-plan.md)
 - [Browser tool contract v0.1](contracts/v0.1/README.md)
+- [v0.1 verification evidence](docs/v0.1-verification.md)
 - [Contribution and Git workflow](CONTRIBUTING.md)
 
 ## Planned milestones

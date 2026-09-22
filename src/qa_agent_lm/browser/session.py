@@ -52,6 +52,14 @@ from qa_agent_lm.browser.evidence import (
 
 _ELEMENT_REF = re.compile(r"^el_(\d{6})_(\d{4})$")
 _ARTIFACT_LABEL = re.compile(r"^[A-Za-z0-9][A-Za-z0-9 _-]{0,79}$")
+_CONTRACT_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_-]{0,127}$")
+_HUMAN_HELP_REASONS = {
+    "ambiguous_goal",
+    "missing_information",
+    "sensitive_action",
+    "blocked",
+    "other",
+}
 _INTERACTIVE_SELECTOR = ",".join(
     (
         "a[href]",
@@ -180,6 +188,17 @@ class InteractionResult:
 @dataclass(frozen=True)
 class TypeResult:
     characters_written: int
+
+
+@dataclass(frozen=True)
+class FinishResult:
+    outcome: str
+    state: str = "finished"
+
+
+@dataclass(frozen=True)
+class HumanHelpResult:
+    state: str = "paused"
 
 
 class BrowserSession:
@@ -427,6 +446,36 @@ class BrowserSession:
                 raise WallClockTimeoutError(
                     "Browser session exceeded its wall-clock budget"
                 ) from error
+
+    async def finish(
+        self, outcome: str, summary: str, evidence_ids: tuple[str, ...]
+    ) -> FinishResult:
+        async with self._lock:
+            self._active_page()
+            self._begin_action()
+            if outcome not in {"pass", "fail"}:
+                raise InvalidRequestError("outcome must be pass or fail")
+            if not 1 <= len(summary) <= 2000:
+                raise InvalidRequestError("summary must contain between 1 and 2000 characters")
+            if len(evidence_ids) > 50 or len(set(evidence_ids)) != len(evidence_ids):
+                raise InvalidRequestError("evidence_ids must contain at most 50 unique values")
+            if any(_CONTRACT_ID.fullmatch(value) is None for value in evidence_ids):
+                raise InvalidRequestError("evidence_ids contains an invalid identifier")
+            result = FinishResult(outcome=outcome)
+            await self.close()
+            return result
+
+    async def request_human_help(self, reason: str, question: str) -> HumanHelpResult:
+        async with self._lock:
+            self._active_page()
+            self._begin_action()
+            if reason not in _HUMAN_HELP_REASONS:
+                raise InvalidRequestError("reason is not a supported human-help reason")
+            if not 1 <= len(question) <= 1000:
+                raise InvalidRequestError("question must contain between 1 and 1000 characters")
+            result = HumanHelpResult()
+            await self.close()
+            return result
 
     def _active_page(self) -> Page:
         if self.state is not SessionState.ACTIVE or self._page is None:
