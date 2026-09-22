@@ -29,6 +29,25 @@ class NavigationTimeoutError(BrowserSessionError):
     retryable = True
 
 
+class ActionTimeoutError(BrowserSessionError):
+    code = "ACTION_TIMEOUT"
+    retryable = True
+
+
+class TargetNotFoundError(BrowserSessionError):
+    code = "TARGET_NOT_FOUND"
+    retryable = True
+
+
+class StaleElementReferenceError(BrowserSessionError):
+    code = "STALE_ELEMENT_REFERENCE"
+    retryable = True
+
+
+class InvalidRequestError(BrowserSessionError):
+    code = "INVALID_REQUEST"
+
+
 class StepLimitExceededError(BrowserSessionError):
     code = "STEP_LIMIT_EXCEEDED"
 
