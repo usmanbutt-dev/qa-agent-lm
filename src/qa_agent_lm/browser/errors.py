@@ -48,6 +48,10 @@ class InvalidRequestError(BrowserSessionError):
     code = "INVALID_REQUEST"
 
 
+class ArtifactLimitExceededError(BrowserSessionError):
+    code = "ARTIFACT_LIMIT_EXCEEDED"
+
+
 class StepLimitExceededError(BrowserSessionError):
     code = "STEP_LIMIT_EXCEEDED"
 
