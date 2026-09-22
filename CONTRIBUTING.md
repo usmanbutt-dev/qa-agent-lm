@@ -42,3 +42,13 @@ Every pull request should state:
 ## Definition of done
 
 A change is complete when its acceptance criteria pass, deterministic behavior is covered by tests, documentation matches behavior, and generated artifacts are reproducible from committed configuration.
+
+Run the local quality gates before opening a pull request:
+
+```powershell
+uv sync --locked --dev
+uv run ruff format --check .
+uv run ruff check .
+uv run mypy
+uv run pytest
+```
