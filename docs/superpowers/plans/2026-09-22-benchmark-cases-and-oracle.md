@@ -106,11 +106,15 @@ if manifest_path.read_text(encoding="utf-8") != expected:
     ("prediction", "tool_correct"),
     [
         ({"contract_version": "0.2", "operation": "inspect", "input": {}}, True),
-        ({"contract_version": "0.2", "operation": "click", "input": {"element_ref": "el_1"}}, False),
+        (
+            {"contract_version": "0.2", "operation": "click", "input": {"element_ref": "el_1"}},
+            False,
+        ),
     ],
 )
-def test_tool_selection(case_with_inspect_checkpoint: BenchmarkCase,
-                        prediction: dict[str, object], tool_correct: bool) -> None:
+def test_tool_selection(
+    case_with_inspect_checkpoint: BenchmarkCase, prediction: dict[str, object], tool_correct: bool
+) -> None:
     score = score_decision(case_with_inspect_checkpoint, "observe", prediction)
     assert score.tool_correct is tool_correct
 ```
@@ -122,8 +126,7 @@ def test_tool_selection(case_with_inspect_checkpoint: BenchmarkCase,
 def contains(actual: object, expected: object) -> bool:
     if isinstance(expected, dict):
         return isinstance(actual, dict) and all(
-            key in actual and contains(actual[key], value)
-            for key, value in expected.items()
+            key in actual and contains(actual[key], value) for key, value in expected.items()
         )
     return actual == expected
 ```
@@ -225,8 +228,9 @@ async def test_scripted_pass_is_repeatable(pass_case: BenchmarkCase, tmp_path: P
 
 ```python
 with running_demo() as origin:
-    async with BrowserSession(BrowserSessionConfig(allowed_origins=(origin,),
-                                                   artifact_dir=artifact_dir)) as session:
+    async with BrowserSession(
+        BrowserSessionConfig(allowed_origins=(origin,), artifact_dir=artifact_dir)
+    ) as session:
         trace = await script(session, origin)
         for decision in trace.decisions:
             validate_scripted_decision(decision)
