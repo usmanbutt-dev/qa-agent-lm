@@ -9,6 +9,8 @@ from qa_agent_lm.browser.evidence import (
 from qa_agent_lm.browser.session import (
     BrowserSession,
     BrowserSessionConfig,
+    FinishResult,
+    HumanHelpResult,
     InteractionResult,
     NavigationResult,
     ObservationResult,
@@ -23,6 +25,8 @@ __all__ = [
     "BrowserSessionConfig",
     "DiagnosticEntry",
     "DiagnosticsResult",
+    "FinishResult",
+    "HumanHelpResult",
     "InteractionResult",
     "NavigationResult",
     "ObservationResult",
