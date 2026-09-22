@@ -4,16 +4,20 @@ from __future__ import annotations
 
 import asyncio
 import os
+import re
+from collections.abc import Awaitable, Callable
 from dataclasses import dataclass, field
 from enum import Enum
 from time import monotonic
 from types import TracebackType
+from typing import TypedDict, cast
 from urllib.parse import SplitResult, urlsplit
 
 from playwright.async_api import (
     Browser,
     BrowserContext,
     Download,
+    ElementHandle,
     Page,
     Playwright,
     Route,
@@ -27,14 +31,43 @@ from playwright.async_api import (
 )
 
 from qa_agent_lm.browser.errors import (
+    ActionTimeoutError,
     DownloadBlockedError,
     ExternalProtocolBlockedError,
+    InvalidRequestError,
     NavigationTimeoutError,
     OriginNotAllowedError,
     SessionClosedError,
+    StaleElementReferenceError,
     StepLimitExceededError,
+    TargetNotFoundError,
     WallClockTimeoutError,
 )
+
+_ELEMENT_REF = re.compile(r"^el_(\d{6})_(\d{4})$")
+_INTERACTIVE_SELECTOR = ",".join(
+    (
+        "a[href]",
+        "button",
+        "input:not([type=hidden])",
+        "select",
+        "textarea",
+        "[role]",
+        "[contenteditable=true]",
+        '[tabindex]:not([tabindex="-1"])',
+    )
+)
+
+
+class _ElementMetadata(TypedDict):
+    role: str
+    name: str
+    disabled: bool
+
+
+class _ClickTarget(TypedDict):
+    destination: str
+    download: bool
 
 
 class SessionState(Enum):
@@ -74,6 +107,7 @@ def _configured_origin(value: str) -> str:
 class BrowserSessionConfig:
     allowed_origins: tuple[str, ...]
     navigation_timeout_ms: int = 10_000
+    action_timeout_ms: int = 5_000
     wall_clock_timeout_s: float = 60.0
     max_actions: int = 50
     headless: bool = True
@@ -87,6 +121,8 @@ class BrowserSessionConfig:
             raise ValueError("At least one allowed origin is required")
         if self.navigation_timeout_ms <= 0:
             raise ValueError("navigation_timeout_ms must be positive")
+        if self.action_timeout_ms <= 0:
+            raise ValueError("action_timeout_ms must be positive")
         if self.wall_clock_timeout_s <= 0:
             raise ValueError("wall_clock_timeout_s must be positive")
         if self.max_actions <= 0:
@@ -104,6 +140,32 @@ class NavigationResult:
     title: str
 
 
+@dataclass(frozen=True)
+class ObservedElement:
+    element_ref: str
+    role: str
+    name: str
+    disabled: bool
+
+
+@dataclass(frozen=True)
+class ObservationResult:
+    observation_id: str
+    url: str
+    elements: tuple[ObservedElement, ...]
+    truncated: bool
+
+
+@dataclass(frozen=True)
+class InteractionResult:
+    navigation_occurred: bool
+
+
+@dataclass(frozen=True)
+class TypeResult:
+    characters_written: int
+
+
 class BrowserSession:
     def __init__(self, config: BrowserSessionConfig) -> None:
         self.config = config
@@ -114,6 +176,9 @@ class BrowserSession:
         self._page: Page | None = None
         self._started_at: float | None = None
         self._actions = 0
+        self._observation_generation = 0
+        self._active_observation_generation: int | None = None
+        self._elements: dict[str, ElementHandle] = {}
         self._blocked_url: str | None = None
         self._download_seen = False
         self._lock = asyncio.Lock()
@@ -155,6 +220,7 @@ class BrowserSession:
         if self.state is SessionState.CLOSED:
             return
         self.state = SessionState.CLOSED
+        await self._invalidate_observation()
         if self._context is not None:
             await self._context.close()
         if self._browser is not None:
@@ -168,6 +234,7 @@ class BrowserSession:
         async with self._lock:
             page = self._active_page()
             remaining = self._begin_action()
+            await self._invalidate_observation()
             self._ensure_allowed(url)
             self._blocked_url = None
             self._download_seen = False
@@ -197,6 +264,113 @@ class BrowserSession:
             self._ensure_allowed(page.url)
             return NavigationResult(final_url=page.url, title=await page.title())
 
+    async def inspect(
+        self,
+        *,
+        scope_ref: str | None = None,
+        max_elements: int = 100,
+        include_text: bool = True,
+    ) -> ObservationResult:
+        async with self._lock:
+            page = self._active_page()
+            remaining = self._begin_action()
+            if not 1 <= max_elements <= 200:
+                raise InvalidRequestError("max_elements must be between 1 and 200")
+            scope = self._resolve_element(scope_ref) if scope_ref is not None else page
+            timeout = min(self.config.action_timeout_ms / 1000, remaining)
+            try:
+                async with asyncio.timeout(timeout):
+                    candidates = await scope.query_selector_all(_INTERACTIVE_SELECTOR)
+                    visible: list[tuple[ElementHandle, _ElementMetadata]] = []
+                    processed_count = 0
+                    for handle in candidates:
+                        processed_count += 1
+                        if not await handle.is_visible():
+                            await handle.dispose()
+                            continue
+                        metadata = cast(
+                            _ElementMetadata,
+                            await handle.evaluate(
+                                """(element, includeText) => {
+                                  const tag = element.tagName.toLowerCase();
+                                  const inputType = (element.getAttribute('type') || 'text').toLowerCase();
+                                  const implicitRoles = {
+                                    a: 'link', button: 'button', select: 'combobox',
+                                    textarea: 'textbox'
+                                  };
+                                  let role = element.getAttribute('role') || implicitRoles[tag] || tag;
+                                  if (tag === 'input') {
+                                    role = ['button', 'submit', 'reset'].includes(inputType)
+                                      ? 'button'
+                                      : ['checkbox', 'radio'].includes(inputType) ? inputType : 'textbox';
+                                  }
+                                  const label = element.labels?.[0]?.textContent?.trim() || '';
+                                  const text = includeText ? (element.textContent || '').trim() : '';
+                                  const name = element.getAttribute('aria-label') || label ||
+                                    element.getAttribute('placeholder') || text ||
+                                    element.getAttribute('name') || '';
+                                  return {
+                                    role: String(role).slice(0, 80),
+                                    name: String(name).replace(/\\s+/g, ' ').slice(0, 500),
+                                    disabled: element.matches(':disabled') ||
+                                      element.getAttribute('aria-disabled') === 'true'
+                                  };
+                                }""",
+                                include_text,
+                            ),
+                        )
+                        visible.append((handle, metadata))
+                        if len(visible) > max_elements:
+                            break
+                    for handle in candidates[processed_count:]:
+                        await handle.dispose()
+                    retained = visible[:max_elements]
+                    for handle, _ in visible[max_elements:]:
+                        await handle.dispose()
+            except TimeoutError as error:
+                raise ActionTimeoutError("Inspection timed out") from error
+
+            await self._invalidate_observation()
+            self._observation_generation += 1
+            generation = self._observation_generation
+            self._active_observation_generation = generation
+            observed: list[ObservedElement] = []
+            for index, (handle, metadata) in enumerate(retained, start=1):
+                element_ref = f"el_{generation:06d}_{index:04d}"
+                self._elements[element_ref] = handle
+                observed.append(ObservedElement(element_ref=element_ref, **metadata))
+            return ObservationResult(
+                observation_id=f"obs_{generation:06d}",
+                url=page.url,
+                elements=tuple(observed),
+                truncated=len(visible) > max_elements,
+            )
+
+    async def click(self, element_ref: str) -> InteractionResult:
+        async with self._lock:
+            page = self._active_page()
+            remaining = self._begin_action()
+            target = self._resolve_element(element_ref)
+            await self._validate_click_target(target)
+            before_url = page.url
+            await self._perform_interaction(
+                lambda timeout: target.click(timeout=timeout), remaining, "Click"
+            )
+            return InteractionResult(navigation_occurred=page.url != before_url)
+
+    async def type(self, element_ref: str, text: str, *, replace: bool = True) -> TypeResult:
+        async with self._lock:
+            self._active_page()
+            remaining = self._begin_action()
+            if not 1 <= len(text) <= 10_000:
+                raise InvalidRequestError("text must contain between 1 and 10000 characters")
+            target = self._resolve_element(element_ref)
+            action = target.fill if replace else target.type
+            await self._perform_interaction(
+                lambda timeout: action(text, timeout=timeout), remaining, "Text entry"
+            )
+            return TypeResult(characters_written=len(text))
+
     def _active_page(self) -> Page:
         if self.state is not SessionState.ACTIVE or self._page is None:
             raise SessionClosedError("Browser session is not active")
@@ -212,6 +386,79 @@ class BrowserSession:
         if remaining <= 0:
             raise WallClockTimeoutError("Browser session exceeded its wall-clock budget")
         return remaining
+
+    def _resolve_element(self, element_ref: str) -> ElementHandle:
+        match = _ELEMENT_REF.fullmatch(element_ref)
+        if match is None:
+            raise TargetNotFoundError(f"Unknown element reference: {element_ref}")
+        generation = int(match.group(1))
+        if generation != self._active_observation_generation:
+            raise StaleElementReferenceError(
+                f"Element reference is not from the latest observation: {element_ref}"
+            )
+        try:
+            return self._elements[element_ref]
+        except KeyError as error:
+            raise TargetNotFoundError(f"Unknown element reference: {element_ref}") from error
+
+    async def _perform_interaction(
+        self,
+        action: Callable[[int], Awaitable[None]],
+        remaining: float,
+        label: str,
+    ) -> None:
+        self._blocked_url = None
+        self._download_seen = False
+        timeout_ms = min(self.config.action_timeout_ms, max(1, int(remaining * 1000)))
+        try:
+            async with asyncio.timeout(remaining):
+                await action(timeout_ms)
+        except PlaywrightTimeoutError as error:
+            raise ActionTimeoutError(f"{label} timed out") from error
+        except TimeoutError as error:
+            raise WallClockTimeoutError("Browser session exceeded its wall-clock budget") from error
+        except PlaywrightError as error:
+            if self._blocked_url is not None:
+                raise OriginNotAllowedError(
+                    f"Interaction left the allowed origins: {self._blocked_url}"
+                ) from error
+            if self._download_seen:
+                raise DownloadBlockedError("Downloads are disabled") from error
+            raise TargetNotFoundError(f"{label} target is no longer available") from error
+        if self._blocked_url is not None:
+            raise OriginNotAllowedError(
+                f"Interaction left the allowed origins: {self._blocked_url}"
+            )
+        if self._download_seen:
+            raise DownloadBlockedError("Downloads are disabled")
+
+    async def _validate_click_target(self, target: ElementHandle) -> None:
+        try:
+            details = cast(
+                _ClickTarget,
+                await target.evaluate(
+                    """element => {
+                      const form = element.form || element.closest('form');
+                      return {
+                        destination: element.href || element.formAction || form?.action || '',
+                        download: element.hasAttribute('download')
+                      };
+                    }"""
+                ),
+            )
+        except PlaywrightError as error:
+            raise TargetNotFoundError("Click target is no longer available") from error
+        if details["download"]:
+            raise DownloadBlockedError("Downloads are disabled")
+        if details["destination"]:
+            self._ensure_allowed(details["destination"])
+
+    async def _invalidate_observation(self) -> None:
+        handles = tuple(self._elements.values())
+        self._elements.clear()
+        self._active_observation_generation = None
+        for handle in handles:
+            await handle.dispose()
 
     def _ensure_allowed(self, url: str) -> None:
         parts = urlsplit(url)
