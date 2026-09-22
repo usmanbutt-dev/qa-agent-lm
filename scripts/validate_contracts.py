@@ -1,10 +1,3 @@
-# /// script
-# requires-python = ">=3.11"
-# dependencies = [
-#   "jsonschema[format]==4.25.1",
-# ]
-# ///
-
 """Validate browser-tool schemas and their positive/negative contract cases."""
 
 from __future__ import annotations
@@ -12,18 +5,17 @@ from __future__ import annotations
 import json
 import sys
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from jsonschema import Draft202012Validator, FormatChecker
-
 
 ROOT = Path(__file__).resolve().parents[1]
 CONTRACTS = ROOT / "contracts" / "v0.1"
 CASES_PATH = ROOT / "tests" / "contracts" / "cases.json"
 
 
-def load_json(path: Path) -> Any:
-    return json.loads(path.read_text(encoding="utf-8"))
+def load_json(path: Path) -> dict[str, Any]:
+    return cast(dict[str, Any], json.loads(path.read_text(encoding="utf-8")))
 
 
 def validate_cases(

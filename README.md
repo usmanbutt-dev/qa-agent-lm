@@ -12,6 +12,20 @@ The planned system will translate a testing objective into browser actions, exec
 
 **Phase 0: specification and evaluation design.** No model, framework, or dataset has been selected yet.
 
+## Development
+
+Requirements: Python 3.11 and [uv](https://docs.astral.sh/uv/).
+
+```powershell
+uv sync --locked --dev
+uv run ruff format --check .
+uv run ruff check .
+uv run mypy
+uv run pytest
+```
+
+These are the same quality gates run by CI. Update `uv.lock` intentionally with `uv lock` whenever project dependencies change.
+
 ## Project principles
 
 - Establish evaluation before training.

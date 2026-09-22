@@ -56,10 +56,11 @@ Schemas are immutable after release. Backward-compatible clarifications update d
 
 ## Validation
 
-Run the pinned standalone validator:
+Install the frozen development environment and run the validator:
 
 ```powershell
-uv run --script scripts/validate_contracts.py
+uv sync --locked --dev
+uv run python scripts/validate_contracts.py
 ```
 
 It checks both schemas against Draft 2020-12, asserts that all valid fixtures pass, and asserts that all invalid fixtures fail.
