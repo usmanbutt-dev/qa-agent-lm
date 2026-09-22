@@ -1,0 +1,41 @@
+{
+  "contract_version": "0.2",
+  "case_id": "train_form_typo",
+  "title": "Shipping city",
+  "objective": "Correct the misspelled city in the shipping form before saving.",
+  "split": "train",
+  "tags": [
+    "recovery"
+  ],
+  "setup": {
+    "start_path": "/",
+    "seed": {
+      "fixture": "form_typo"
+    }
+  },
+  "oracle": {
+    "checkpoints": [
+      {
+        "checkpoint_id": "next_step",
+        "after_operations": [
+          "navigate",
+          "inspect"
+        ],
+        "acceptable_next": [
+          {
+            "operation": "type",
+            "target": {
+              "role": "textbox",
+              "name": "Shipping city"
+            }
+          }
+        ]
+      }
+    ],
+    "terminal": {
+      "operation": "finish",
+      "outcome": "pass"
+    },
+    "max_steps": 10
+  }
+}

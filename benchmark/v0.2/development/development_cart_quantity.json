@@ -1,0 +1,41 @@
+{
+  "contract_version": "0.2",
+  "case_id": "development_cart_quantity",
+  "title": "Increase quantity",
+  "objective": "Report that cart quantity does not update after incrementing.",
+  "split": "development",
+  "tags": [
+    "defect"
+  ],
+  "setup": {
+    "start_path": "/",
+    "seed": {
+      "fixture": "cart_quantity"
+    }
+  },
+  "oracle": {
+    "checkpoints": [
+      {
+        "checkpoint_id": "next_step",
+        "after_operations": [
+          "navigate",
+          "inspect"
+        ],
+        "acceptable_next": [
+          {
+            "operation": "click",
+            "target": {
+              "role": "button",
+              "name": "Increase quantity"
+            }
+          }
+        ]
+      }
+    ],
+    "terminal": {
+      "operation": "finish",
+      "outcome": "fail"
+    },
+    "max_steps": 10
+  }
+}

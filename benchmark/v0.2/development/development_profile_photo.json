@@ -1,0 +1,41 @@
+{
+  "contract_version": "0.2",
+  "case_id": "development_profile_photo",
+  "title": "Save profile",
+  "objective": "Confirm a saved profile image appears in the account header.",
+  "split": "development",
+  "tags": [
+    "pass"
+  ],
+  "setup": {
+    "start_path": "/",
+    "seed": {
+      "fixture": "profile_photo"
+    }
+  },
+  "oracle": {
+    "checkpoints": [
+      {
+        "checkpoint_id": "next_step",
+        "after_operations": [
+          "navigate",
+          "inspect"
+        ],
+        "acceptable_next": [
+          {
+            "operation": "click",
+            "target": {
+              "role": "button",
+              "name": "Save profile"
+            }
+          }
+        ]
+      }
+    ],
+    "terminal": {
+      "operation": "finish",
+      "outcome": "pass"
+    },
+    "max_steps": 10
+  }
+}

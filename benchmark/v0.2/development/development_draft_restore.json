@@ -1,0 +1,41 @@
+{
+  "contract_version": "0.2",
+  "case_id": "development_draft_restore",
+  "title": "Restore draft",
+  "objective": "Restore the autosaved article draft after leaving the editor.",
+  "split": "development",
+  "tags": [
+    "recovery"
+  ],
+  "setup": {
+    "start_path": "/",
+    "seed": {
+      "fixture": "draft_restore"
+    }
+  },
+  "oracle": {
+    "checkpoints": [
+      {
+        "checkpoint_id": "next_step",
+        "after_operations": [
+          "navigate",
+          "inspect"
+        ],
+        "acceptable_next": [
+          {
+            "operation": "click",
+            "target": {
+              "role": "button",
+              "name": "Restore draft"
+            }
+          }
+        ]
+      }
+    ],
+    "terminal": {
+      "operation": "finish",
+      "outcome": "pass"
+    },
+    "max_steps": 10
+  }
+}

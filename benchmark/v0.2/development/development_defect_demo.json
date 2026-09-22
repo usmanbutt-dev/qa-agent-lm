@@ -1,0 +1,41 @@
+{
+  "contract_version": "0.2",
+  "case_id": "development_defect_demo",
+  "title": "Run failing check",
+  "objective": "Detect the intentional server error in the local demo check.",
+  "split": "development",
+  "tags": [
+    "defect"
+  ],
+  "setup": {
+    "start_path": "/",
+    "seed": {
+      "fixture": "defect_demo"
+    }
+  },
+  "oracle": {
+    "checkpoints": [
+      {
+        "checkpoint_id": "choose_failure",
+        "after_operations": [
+          "navigate",
+          "inspect"
+        ],
+        "acceptable_next": [
+          {
+            "operation": "click",
+            "target": {
+              "role": "button",
+              "name": "Run failing check"
+            }
+          }
+        ]
+      }
+    ],
+    "terminal": {
+      "operation": "finish",
+      "outcome": "fail"
+    },
+    "max_steps": 10
+  }
+}

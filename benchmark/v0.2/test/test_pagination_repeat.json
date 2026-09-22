@@ -1,0 +1,41 @@
+{
+  "contract_version": "0.2",
+  "case_id": "test_pagination_repeat",
+  "title": "Next page",
+  "objective": "Detect repeated records on the second audit-log page.",
+  "split": "test",
+  "tags": [
+    "defect"
+  ],
+  "setup": {
+    "start_path": "/",
+    "seed": {
+      "fixture": "pagination_repeat"
+    }
+  },
+  "oracle": {
+    "checkpoints": [
+      {
+        "checkpoint_id": "next_step",
+        "after_operations": [
+          "navigate",
+          "inspect"
+        ],
+        "acceptable_next": [
+          {
+            "operation": "click",
+            "target": {
+              "role": "button",
+              "name": "Next page"
+            }
+          }
+        ]
+      }
+    ],
+    "terminal": {
+      "operation": "finish",
+      "outcome": "fail"
+    },
+    "max_steps": 10
+  }
+}

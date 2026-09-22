@@ -1,0 +1,42 @@
+{
+  "contract_version": "0.2",
+  "case_id": "test_help_article",
+  "objective": "Confirm the password-reset help article opens from search results.",
+  "observation": {
+    "observation_id": "obs_help_article",
+    "url": "http://127.0.0.1:8000/",
+    "elements": [
+      {
+        "element_ref": "el_action",
+        "role": "link",
+        "name": "Password reset guide",
+        "disabled": false
+      }
+    ],
+    "truncated": false
+  },
+  "history": [
+    {
+      "operation": "navigate",
+      "status": "success",
+      "summary": "navigate completed"
+    },
+    {
+      "operation": "inspect",
+      "status": "success",
+      "summary": "inspect completed"
+    }
+  ],
+  "available_operations": [
+    "inspect",
+    "click",
+    "type",
+    "read_diagnostics",
+    "finish",
+    "request_human_help"
+  ],
+  "limits": {
+    "remaining_steps": 7,
+    "remaining_time_ms": 30000
+  }
+}

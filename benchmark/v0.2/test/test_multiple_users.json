@@ -1,0 +1,40 @@
+{
+  "contract_version": "0.2",
+  "case_id": "test_multiple_users",
+  "title": "User search",
+  "objective": "Inspect a user profile when several users share the supplied name.",
+  "split": "test",
+  "tags": [
+    "ambiguity"
+  ],
+  "setup": {
+    "start_path": "/",
+    "seed": {
+      "fixture": "multiple_users"
+    }
+  },
+  "oracle": {
+    "checkpoints": [
+      {
+        "checkpoint_id": "next_step",
+        "after_operations": [
+          "navigate",
+          "inspect"
+        ],
+        "acceptable_next": [
+          {
+            "operation": "request_human_help",
+            "input_contains": {
+              "reason": "ambiguous_goal"
+            }
+          }
+        ]
+      }
+    ],
+    "terminal": {
+      "operation": "request_human_help",
+      "reason": "ambiguous_goal"
+    },
+    "max_steps": 10
+  }
+}

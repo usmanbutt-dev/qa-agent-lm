@@ -1,0 +1,41 @@
+{
+  "contract_version": "0.2",
+  "case_id": "test_download_receipt",
+  "title": "Download receipt",
+  "objective": "Verify a receipt PDF is available after completing a test purchase.",
+  "split": "test",
+  "tags": [
+    "pass"
+  ],
+  "setup": {
+    "start_path": "/",
+    "seed": {
+      "fixture": "download_receipt"
+    }
+  },
+  "oracle": {
+    "checkpoints": [
+      {
+        "checkpoint_id": "next_step",
+        "after_operations": [
+          "navigate",
+          "inspect"
+        ],
+        "acceptable_next": [
+          {
+            "operation": "click",
+            "target": {
+              "role": "link",
+              "name": "Download receipt"
+            }
+          }
+        ]
+      }
+    ],
+    "terminal": {
+      "operation": "finish",
+      "outcome": "pass"
+    },
+    "max_steps": 10
+  }
+}

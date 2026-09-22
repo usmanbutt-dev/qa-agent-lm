@@ -1,0 +1,42 @@
+{
+  "contract_version": "0.2",
+  "case_id": "development_unnamed_project",
+  "objective": "Open a project dashboard without a project identifier.",
+  "observation": {
+    "observation_id": "obs_unnamed_project",
+    "url": "http://127.0.0.1:8000/",
+    "elements": [
+      {
+        "element_ref": "el_action",
+        "role": "textbox",
+        "name": "Project ID",
+        "disabled": false
+      }
+    ],
+    "truncated": false
+  },
+  "history": [
+    {
+      "operation": "navigate",
+      "status": "success",
+      "summary": "navigate completed"
+    },
+    {
+      "operation": "inspect",
+      "status": "success",
+      "summary": "inspect completed"
+    }
+  ],
+  "available_operations": [
+    "inspect",
+    "click",
+    "type",
+    "read_diagnostics",
+    "finish",
+    "request_human_help"
+  ],
+  "limits": {
+    "remaining_steps": 7,
+    "remaining_time_ms": 30000
+  }
+}
